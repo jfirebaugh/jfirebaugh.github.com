@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+<head>    
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />     
+  <title>SFpark Demand-Responsive Meter Rate Adjustments</title>    
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
+  <script type="text/javascript" src="rates.js"></script>
+  <style type="text/css">  
+    body {
+      font: 14px Helvetica Neue;
+      text-rendering: optimizeLegibility;
+    }
+    
+    .text {
+      margin: 2em 10em 5em 10em;
+    }
+
+    ol {
+      list-style-type: none;
+    }
+    
+    .o1, .o2, .o3, .o4 {
+      display: inline-block;
+      height: 1em;
+      width: 1em;
+      margin-right: .4em;
+    }
+    
+    .o1 { background-color: #ffa5a5; }
+    .o2 { background-color: #dddddd; }
+    .o3 { background-color: #00a9e4; }
+    .o4 { background-color: #004c72; }
+    
+    svg {
+      margin: 0 0 1em 0;
+      font-size: 12px;
+    }
+    
+    .header {
+      font-size: 140%;
+    }
+  </style>
+</head>
+<body>
+  <div class="text">
+    <h2>SF<i>park</i> Demand-Responsive Meter Rate Adjustments</h2>
+    <p>On July 11th 2011, <a href="http://sfpark.org">SF<i>park</i></a> announced the first set of
+      <a href="http://sfpark.org/how-it-works/pricing/">meter rate adjustments</a>.
+      Meter operational hours were divided into six distinct rate periods,
+      and the hourly price of metered parking in the project's seven pilot areas was
+      adjusted on a block-to-block basis in response to parking demand during each period:
+    </p>
+    <ol>
+      <li><span class="o1"></span>+25¢ in periods of 80% or more occupancy
+      <li><span class="o2"></span>No change in periods of 60-80% occupancy
+      <li><span class="o3"></span>−25¢ in periods of 30-60% occupancy
+      <li><span class="o4"></span>−50¢ in periods of less than 40% occupancy
+    </ol>
+    <p>Data provided by <a href="http://sfpark.org/wp-content/uploads/2011/07/SFpark_rateadjustments_meter_july2011b.xls">SF<i>park</i></a>.
+      Visualization created with <a href="http://mbostock.github.com/d3/">d3.js</a>.
+    </p>
+  </div>
+  <script type="text/javascript">
+    var data = d3.entries(rates),
+        y = d3.scale.ordinal()
+          .domain(["M-F until 12:00", "M-F 12:00 to 3:00", "M-F after 3:00",
+                   "Sat until 12:00", "Sat 12:00 to 3:00", "Sat after 3:00"])
+          .rangeBands([0, 100]),
+        l = 110,
+        t = 100;
+
+    var vis = d3.select("body").selectAll("svg")
+        .data(data)
+      .enter().append("svg:svg")
+        .attr("height", 200)
+        .attr("width", function (d) { return d3.entries(d.value).length * 35 + l + 100; });
+
+    vis.append("svg:text")
+       .attr("class", "header")
+       .attr("dx", "1em")
+       .attr("dy", "1em")
+       .text(function (d) { return d.key; });
+
+    var svg = vis.append("svg:g")
+       .attr("transform", "translate(" + l + "," + t + ")");
+    
+    svg.selectAll("text.scale")
+        .data(y.domain())
+      .enter().append("svg:text")
+        .attr("class", "scale")
+        .text(function (d) { return d; })
+        .attr("y", y)
+        .attr("dx", -6)
+        .attr("dy", ".65em")
+        .attr("text-anchor", "end")
+    
+    var col = svg.selectAll(".col")
+        .data(function (d) { return d3.entries(d.value); })
+      .enter().append("svg:g")
+        .attr("class", "col")
+        .attr("transform", function (d, i) { return "translate(" + i * 35 + ",0)"; });
+    
+    col.selectAll("rect")
+        .data(function (d) { return d.value; })
+      .enter().append("svg:rect")
+        .attr("y", function (d, i) { return y(i); })
+        .attr("width", function (d) { return d * 30; })
+        .attr("height", 10)
+        .attr("fill", function (d) {
+          if (d < .3) return "#004c72";
+          if (d < .6) return "#00a9e4";
+          if (d < .8) return "#dddddd";
+                      return "#ffa5a5";
+          })
+      .append("svg:title")
+         .text(function (d) { return d * 100 + '%'; })
+    
+    col.append("svg:text")
+        .attr("class", "label")
+        .text(function (d) { return d.key; })
+        .attr("x", 12)
+        .attr("y", 3)
+        .attr("transform", "rotate(-45)");
+  </script>
+</body>
+</html>
