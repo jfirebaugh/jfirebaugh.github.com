@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+<head>    
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <title>Fitch Sovereign Ratings History</title>
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.time.js"></script>
+  <style type="text/css">  
+    body {
+      font: 12px Helvetica Neue;
+      text-rendering: optimizeLegibility;
+      text-align: center;
+    }
+    
+    p {
+      width: 600px;
+      margin: 0 auto 2em auto;
+    }
+    
+    .country {
+      text-shadow: 0em 0em .5em white, 0em 0em .5em white;
+    }
+  </style>
+</head>
+<body>
+  <h2>Fitch Sovereign Ratings History</h2>
+  <p>This chart shows long-term sovereign foreign currency ratings for 112 countries rated by 
+    <a href="http://www.fitchratings.com/">Fitch Ratings</a> between 1994 and July 2011.
+    Mouse over the chart to highlight individual countries.
+    <a href="http://www.fitchratings.com/web_content/ratings/sovereign_ratings_history.xls">Data</a>
+    provided and copyright Fitch Ratings. Visualization by <a href="https://github.com/jfirebaugh">John Firebaugh</a>
+    using <a href="http://mbostock.github.com/d3/">d3.js</a>.</p>
+  <div id="chart"></div>
+  <script type="text/javascript">
+    d3.json("debt.json", function (json) {
+      // Convert date strings to date objects.
+      json.data.forEach(function (rating) {
+        rating.history.forEach(function (value) {
+          value.date = new Date(Date.parse(value.date));
+        });
+      });
+
+      var w = 960,
+          h = 600,
+          l = 50,
+          r = 40
+          b = 30,
+          x = d3.scale.linear()
+            .domain([new Date(1994, 0, 1), new Date(2011, 6, 28)])
+            .range([0, w]),
+          y = d3.scale.ordinal()
+            .domain(json.ratings)
+            .rangePoints([0, h], 0.5),
+          colors = d3.scale.category20(),
+          line = d3.svg.line()
+            .x(function (d) { return x(d.date); })
+            .y(function (d) { return y(d.rating); })
+            .interpolate("step-after"),
+          time = d3.time.format("%b %Y");
+
+      var vis = d3.select("#chart").append("svg:svg")
+          .attr("height", h + b)
+          .attr("width", w + l + r)
+          .append("svg:g")
+          .attr("transform", function () { return "translate(" + l + ",0)"});
+
+      var tick = vis.selectAll(".tick")
+          .data(x.ticks(10))
+        .enter().append("svg:g")
+          .attr("class", "tick")
+          .attr("transform", function (d) { return "translate(" + x(d) + "," + h + ")"; });
+      
+      tick.append("svg:line")
+          .attr("y0", 0)
+          .attr("y1", 5)
+          .attr("stroke", "black");
+          
+      tick.append("svg:text")
+          .attr("dy", "1.71em")
+          .attr("text-anchor", "middle")
+          .text(function (d) { return time(new Date(d)); });
+
+      vis.selectAll(".yLabel")
+          .data(json.ratings)
+        .enter().append("svg:text")
+          .attr("class", "yLabel")
+          .attr("x", 965)
+          .attr("y", y)
+          .attr("dy", ".35em")
+          .text(function (d) { return d; });
+
+      var g = vis.selectAll(".path")
+          .data(json.data)
+        .enter().append("svg:g")
+          .attr("class", "path");
+
+      g.append("svg:path")
+        .attr("fill", "none")
+        .attr("stroke", function (d) { return colors(d.country); })
+        .attr("stroke-width", 3)
+        .attr("stroke-opacity", 0.2)
+        .attr("d", function (d) { return line(d.history); })
+        .on("mouseover", function (d) {
+            g.sort(function(d0, d1) { return d0 === d ? 1 : d1 === d ? -1 : 0; });
+            d3.select(this).transition()
+              .duration(200)
+              .attr("stroke-width", 5)
+              .attr("stroke-opacity", 1);
+            d3.select(this.nextSibling).transition()
+              .duration(200)
+              .attr("opacity", 1);
+          })
+        .on("mouseout", function (d) {
+            d3.select(this).transition()
+              .duration(200)
+              .attr("stroke-width", 3)
+              .attr("stroke-opacity", 0.2);
+            d3.select(this.nextSibling).transition()
+              .duration(200)
+              .attr("opacity", 0);
+          });
+
+      g.append("svg:text")
+        .attr("class", "country")
+        .attr("x", function (d) { return x(d.history[0].date); })
+        .attr("y", function (d) { return y(d.history[0].rating); })
+        .attr("dx", "-.35em")
+        .attr("dy", ".35em")
+        .attr("text-anchor", "end")
+        .attr("pointer-events", "none")
+        .attr("opacity", 0)
+        .text(function (d) { return d.country; });
+    });
+  </script>
+</body>
+</html>
