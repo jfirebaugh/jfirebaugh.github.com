@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Protovis | John Firebaugh]]></title>
+  <link href="http://jfirebaugh.github.com/blog/categories/protovis/atom.xml" rel="self"/>
+  <link href="http://jfirebaugh.github.com/"/>
+  <updated>2012-03-02T14:54:39-08:00</updated>
+  <id>http://jfirebaugh.github.com/</id>
+  <author>
+    <name><![CDATA[John Firebaugh]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Kernel Density Estimation with Protovis]]></title>
+    <link href="http://jfirebaugh.github.com/blog/2011/04/03/kernel-density-estimation-with-protovis/"/>
+    <updated>2011-04-03T00:00:00-07:00</updated>
+    <id>http://jfirebaugh.github.com/blog/2011/04/03/kernel-density-estimation-with-protovis</id>
+    <content type="html"><![CDATA[<p><a href="http://bl.ocks.org/900762"><img src="http://dl.dropbox.com/u/7078234/KDE.png" alt="" /></a></p>
+
+<p>A <a href="http://en.wikipedia.org/wiki/Kernel_density_estimation">kernel density estimate</a> provides a
+means of estimating and visualizing the probability distribution function of a
+random variable based on a random sample. In contrast to a histogram, a kernel
+density estimate provides a smooth estimate, via the effect of a smoothing
+parameter called the <em>bandwidth</em>, here denoted by <em>h</em>. With the correct choice
+of bandwidth, important features of the distribution can be seen; an incorrect
+choice will result in undersmoothing or oversmoothing and obscure those
+features.</p>
+
+<p>Here we see a histogram and three kernel density estimates for a sample of
+waiting times in minutes between eruptions of
+<a href="http://en.wikipedia.org/wiki/Old_Faithful">Old Faithful Geyser</a> in Yellowstone National
+Park, taken from R's
+<a href="http://stat.ethz.ch/R-manual/R-patched/library/datasets/html/faithful.html"><code>faithful</code></a>
+dataset. The data follow a <a href="http://en.wikipedia%0A.org/wiki/Bimodal_distribution">bimodal distribution</a>; short
+eruptions are followed by a wait time averaging about 55 minutes, and long
+eruptions by a wait time averaging about 80 minutes. In recent years, wait
+times have been increasing, possibly due to the effects of earthquakes on the
+geyser's geohydrology.</p>
+]]></content>
+  </entry>
+  
+</feed>

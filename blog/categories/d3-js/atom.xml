@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: d3.js | John Firebaugh]]></title>
+  <link href="http://jfirebaugh.github.com/blog/categories/d3-js/atom.xml" rel="self"/>
+  <link href="http://jfirebaugh.github.com/"/>
+  <updated>2012-03-02T14:54:39-08:00</updated>
+  <id>http://jfirebaugh.github.com/</id>
+  <author>
+    <name><![CDATA[John Firebaugh]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Visualizing SFpark Demand-Responsive Meter Rate Adjustments]]></title>
+    <link href="http://jfirebaugh.github.com/blog/2011/09/03/visualizing-sfpark-demand-responsive-meter-rate-adjustments/"/>
+    <updated>2011-09-03T00:00:00-07:00</updated>
+    <id>http://jfirebaugh.github.com/blog/2011/09/03/visualizing-sfpark-demand-responsive-meter-rate-adjustments</id>
+    <content type="html"><![CDATA[<p>On July 11th 2011, <a href="http://sfpark.org/">SF<em>park</em></a> announced the
+first set of <a href="http://sfpark.org/how-it-works/pricing/">meter rate adjustments</a>.
+Meter operational hours were divided into six distinct rate periods, and the hourly
+price of metered parking in the project's seven pilot areas was adjusted on a
+block-to-block basis in response to parking demand during each period:</p>
+
+<ul>
+<li>+25¢ in periods of 80% or more occupancy</li>
+<li>No change in periods of 60-80% occupancy</li>
+<li>−25¢ in periods of 30-60% occupancy</li>
+<li>−50¢ in periods of less than 40% occupancy</li>
+</ul>
+
+
+<p>I created this visualization using the <a href="http://mbostock.github.com/d3/">d3.js</a>
+framework and data provided by SF<em>park</em>. Click for full size.</p>
+
+<p><a href="http://jfirebaugh.github.com/sfpark/rates.html"><img src="http://jfirebaugh.github.com/sfpark/SFpark.png" alt="SFpark meter
+rate adjustment visualization" /></a></p>
+]]></content>
+  </entry>
+  
+</feed>

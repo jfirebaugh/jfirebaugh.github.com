@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Tools | John Firebaugh]]></title>
+  <link href="http://jfirebaugh.github.com/blog/categories/tools/atom.xml" rel="self"/>
+  <link href="http://jfirebaugh.github.com/"/>
+  <updated>2012-03-02T14:54:39-08:00</updated>
+  <id>http://jfirebaugh.github.com/</id>
+  <author>
+    <name><![CDATA[John Firebaugh]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Selenium on Ruby]]></title>
+    <link href="http://jfirebaugh.github.com/blog/2010/12/22/selenium-on-ruby/"/>
+    <updated>2010-12-22T00:00:00-08:00</updated>
+    <id>http://jfirebaugh.github.com/blog/2010/12/22/selenium-on-ruby</id>
+    <content type="html"><![CDATA[<p>The state of Selenium on Ruby is a bit confusing. Among the top google results for
+<a href="http://www.google.com/search?q=selenium+ruby">"selenium ruby"</a> are several links that are badly out of date, and it's
+not clear which of the many <a href="http://rubygems.org/search?utf8=%E2%9C%93&amp;amp;query=selenium">gems</a> are ones you would want
+to use. This post aims to clear up some of the confusion.</p>
+
+<p>First of all, you should be aware that there are two Selenium APIs: the original 1.0 API, called Selenium-RC, and a
+newer 2.0 API called Selenium WebDriver. Internally, the two have quite different architectures. In a nutshell,
+Selenium-RC is based around a Java "Remote Control" server process that launches the browser under test and manages
+communication between the client process (the Ruby interpreter, in our case) and the browser. The browser is controlled
+by injecting the "Selenium Core" JavaScript framework into the Browser's built-in JavaScript interpreter. In contrast,
+WebDriver requires no external process; the browser is launched directly, and controlled via means that vary from
+browser to browser. For example, WebDriver controls Firefox via a custom Firefox extension.</p>
+
+<p>Ruby has good support for both RC and WebDriver. The <a href="http://rubygems.org/gems/selenium-client">selenium-client</a> gem
+(<a href="http://selenium-client.rubyforge.org/">docs</a>, <a href="https://github.com/ph7/selenium-client">source</a>) provides bindings for
+the RC API, and the <a href="http://rubygems.org/gems/selenium-webdriver">selenium-webdriver</a> gem
+(<a href="http://code.google.com/p/selenium/wiki/RubyBindings">wiki</a>,
+<a href="http://selenium.googlecode.com/svn/trunk/docs/api/rb/index.html">docs</a>,
+<a href="http://code.google.com/p/selenium/source/browse/#svn%2Ftrunk%2Frb">source</a>) provides bindings for the WebDriver API.
+You will likely want to use one of these two gems, but which one? If you are using Selenium via a higher-level Ruby
+library such as Webrat or Capybara, the choice will be made for you: Webrat uses selenium-client, Capybara uses
+selenium-webdriver. If you want to access a Selenium API directly, I would generally recommend selenium-webdriver.
+The WebDriver API provides several advantages, including multi-browser testing, page navigation, drag-and-drop, and
+multi-frame and multi-window support. It recently released its
+<a href="http://groups.google.com/group/selenium-users/browse_thread/thread/28ce2b37123a4e4d">first beta</a> and is where the
+future of Selenium and Selenium on Ruby lies. It is, however, still beta software and sometimes changes its API in
+aggravating ways. If stability is of paramount concern, stick with selenium-client.</p>
+
+<p>You may find references to some other Selenium-related Ruby projects. The <a href="http://rubygems.org/gems/Selenium">Selenium</a>
+gem (with a capital "S") and its associated website <a href="http://selenium.rubyforge.org/">selenium.rubyforge.org</a> paved the
+way for Selenium on Ruby, but today it is obsolete, as is the <a href="http://rubygems.org/gems/selenium-rails">selenium-rails</a>
+gem which depends on it. Unfortunately they are still prominently featured in search results and on the
+<a href="http://seleniumhq.org/projects/ruby/">outdated "Selenium on Ruby" page</a>, which doesn't even mention selenium-webdriver.</p>
+
+<p>The Selenium RC API relies on an external Java-based server process, and though the selenium-client gem provides rake
+tasks to start and stop an RC server, it does not provide the actual jar file necessary to run the service. You can
+either download and install it yourself, or install the <a href="http://rubygems.org/gems/selenium-rc">selenium-rc</a> gem, which
+bundles it. You'll sometimes see a gem that depends on selenium-client also depending on selenium-rc solely for the jar,
+as the <a href="https://github.com/pivotal/jasmine-gem">jasmine</a> gem does. The selenium-rc gem has some Ruby code in it too, but
+it more or less duplicates functionality that's already part of selenium-client.</p>
+
+<p>Finally there's the <a href="http://rubygems.org/gems/selenium">selenium</a> and
+<a href="http://rubygems.org/gems/selenium_remote_control">selenium_remote_control</a> gems, which provide functionality similar
+to selenium-client and selenium-rc. They don't seem widely used and at first glance I don't see any reason to prefer
+them to the more popular gems. Recent releases of the selenium-webdriver gem include the selenium-client code as well,
+and personally, I hope that selenium-webdriver can usurp the "selenium" gem name and become the One True Selenium gem
+for Ruby.</p>
+]]></content>
+  </entry>
+  
+</feed>

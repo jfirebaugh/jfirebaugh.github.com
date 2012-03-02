@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Homebrew | John Firebaugh]]></title>
+  <link href="http://jfirebaugh.github.com/blog/categories/homebrew/atom.xml" rel="self"/>
+  <link href="http://jfirebaugh.github.com/"/>
+  <updated>2012-03-02T14:54:39-08:00</updated>
+  <id>http://jfirebaugh.github.com/</id>
+  <author>
+    <name><![CDATA[John Firebaugh]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Xcode 4.3, homebrew, and autoconf]]></title>
+    <link href="http://jfirebaugh.github.com/blog/2012/02/18/xcode-4-dot-3-homebrew-and-autoconf/"/>
+    <updated>2012-02-18T00:00:00-08:00</updated>
+    <id>http://jfirebaugh.github.com/blog/2012/02/18/xcode-4-dot-3-homebrew-and-autoconf</id>
+    <content type="html"><![CDATA[<p>Xcode 4.3 no longer includes autotools. If you have installed Xcode 4.3 and
+uninstalled the previous versions, you will no longer have <code>/usr/bin/autoconf</code>.
+This isn't usually a problem for installing homebrew formulae, since the
+downloaded packages should come with <code>configure</code> pregenerated, but if you want
+to use <code>brew install --HEAD</code> or are building a package from a source
+repository, you may need it. Here's how to get it:</p>
+
+<p><code>
+brew install https://github.com/adamv/homebrew-alt/raw/master/duplicates/autoconf.rb
+brew link autoconf
+</code></p>
+
+<p>At some point in the near future, homebrew will probably add an autoconf formula.
+At that point, you'll be able to <code>brew install autoconf</code> directly.</p>
+]]></content>
+  </entry>
+  
+</feed>

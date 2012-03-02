@@ -1,112 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>John Firebaugh</title>
-  <meta name="author" content="John Firebaugh">
-
-  
-  <meta name="description" content="Xcode 4.3 no longer includes autotools. If you have installed Xcode 4.3 and
-uninstalled the previous versions, you will no longer have /usr/bin/ &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="http://jfirebaugh.github.com">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="/atom.xml" rel="alternate" title="John Firebaugh" type="application/atom+xml">
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-29668835-1']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-</head>
-
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">John Firebaugh</a></h1>
-  
-    <h2>Open Source, Ruby, Rubinius, RubySpec, Rails.</h2>
-  
-</hgroup>
-
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:jfirebaugh.github.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav>
-  <div id="main">
-    <div id="content">
-      <div class="blog-index">
-  
-  
-  
-    <article>
-      
-  <header>
+  <title><![CDATA[John Firebaugh]]></title>
+  <link href="http://jfirebaugh.github.com/atom.xml" rel="self"/>
+  <link href="http://jfirebaugh.github.com/"/>
+  <updated>2012-03-02T14:54:39-08:00</updated>
+  <id>http://jfirebaugh.github.com/</id>
+  <author>
+    <name><![CDATA[John Firebaugh]]></name>
     
-      <h1 class="entry-title"><a href="/blog/2012/02/18/xcode-4-dot-3-homebrew-and-autoconf/">Xcode 4.3, Homebrew, and Autoconf</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
   
-
-
-<time datetime="2012-02-18T00:00:00-08:00" pubdate data-updated="true">Feb 18<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Xcode 4.3 no longer includes autotools. If you have installed Xcode 4.3 and
+  <entry>
+    <title type="html"><![CDATA[Xcode 4.3, homebrew, and autoconf]]></title>
+    <link href="http://jfirebaugh.github.com/blog/2012/02/18/xcode-4-dot-3-homebrew-and-autoconf/"/>
+    <updated>2012-02-18T00:00:00-08:00</updated>
+    <id>http://jfirebaugh.github.com/blog/2012/02/18/xcode-4-dot-3-homebrew-and-autoconf</id>
+    <content type="html"><![CDATA[<p>Xcode 4.3 no longer includes autotools. If you have installed Xcode 4.3 and
 uninstalled the previous versions, you will no longer have <code>/usr/bin/autoconf</code>.
 This isn&#8217;t usually a problem for installing homebrew formulae, since the
 downloaded packages should come with <code>configure</code> pregenerated, but if you want
@@ -121,42 +33,15 @@ repository, you may need it. Here&#8217;s how to get it:</p>
 
 <p>At some point in the near future, homebrew will probably add an autoconf formula.
 At that point, you&#8217;ll be able to <code>brew install autoconf</code> directly.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/09/03/visualizing-sfpark-demand-responsive-meter-rate-adjustments/">Visualizing SFpark Demand-Responsive Meter Rate Adjustments</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-09-03T00:00:00-07:00" pubdate data-updated="true">Sep 3<span>rd</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>On July 11th 2011, <a href="http://sfpark.org/">SF<em>park</em></a> announced the
+  <entry>
+    <title type="html"><![CDATA[Visualizing SFpark Demand-Responsive Meter Rate Adjustments]]></title>
+    <link href="http://jfirebaugh.github.com/blog/2011/09/03/visualizing-sfpark-demand-responsive-meter-rate-adjustments/"/>
+    <updated>2011-09-03T00:00:00-07:00</updated>
+    <id>http://jfirebaugh.github.com/blog/2011/09/03/visualizing-sfpark-demand-responsive-meter-rate-adjustments</id>
+    <content type="html"><![CDATA[<p>On July 11th 2011, <a href="http://sfpark.org/">SF<em>park</em></a> announced the
 first set of <a href="http://sfpark.org/how-it-works/pricing/">meter rate adjustments</a>.
 Meter operational hours were divided into six distinct rate periods, and the hourly
 price of metered parking in the project&#8217;s seven pilot areas was adjusted on a
@@ -173,44 +58,17 @@ block-to-block basis in response to parking demand during each period:</p>
 <p>I created this visualization using the <a href="http://mbostock.github.com/d3/">d3.js</a>
 framework and data provided by SF<em>park</em>. Click for full size.</p>
 
-<p><a href="/sfpark/rates.html"><img src="/sfpark/SFpark.png" alt="SFpark meter
+<p><a href="http://jfirebaugh.github.com/sfpark/rates.html"><img src="http://jfirebaugh.github.com/sfpark/SFpark.png" alt="SFpark meter
 rate adjustment visualization" /></a></p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/04/03/kernel-density-estimation-with-protovis/">Kernel Density Estimation With Protovis</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-04-03T00:00:00-07:00" pubdate data-updated="true">Apr 3<span>rd</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="http://bl.ocks.org/900762"><img src="http://dl.dropbox.com/u/7078234/KDE.png" alt="" /></a></p>
+  <entry>
+    <title type="html"><![CDATA[Kernel Density Estimation with Protovis]]></title>
+    <link href="http://jfirebaugh.github.com/blog/2011/04/03/kernel-density-estimation-with-protovis/"/>
+    <updated>2011-04-03T00:00:00-07:00</updated>
+    <id>http://jfirebaugh.github.com/blog/2011/04/03/kernel-density-estimation-with-protovis</id>
+    <content type="html"><![CDATA[<p><a href="http://bl.ocks.org/900762"><img src="http://dl.dropbox.com/u/7078234/KDE.png" alt="" /></a></p>
 
 <p>A <a href="http://en.wikipedia.org/wiki/Kernel_density_estimation">kernel density estimate</a> provides a
 means of estimating and visualizing the probability distribution function of a
@@ -231,42 +89,15 @@ eruptions are followed by a wait time averaging about 55 minutes, and long
 eruptions by a wait time averaging about 80 minutes. In recent years, wait
 times have been increasing, possibly due to the effects of earthquakes on the
 geyser&#8217;s geohydrology.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/01/21/making-sense-of-constant-lookup-in-ruby/">Making Sense of Constant Lookup in Ruby</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-01-21T00:00:00-08:00" pubdate data-updated="true">Jan 21<span>st</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>In Ruby 1.8, constant lookup is mostly <a
+  <entry>
+    <title type="html"><![CDATA[Making sense of constant lookup in Ruby]]></title>
+    <link href="http://jfirebaugh.github.com/blog/2011/01/21/making-sense-of-constant-lookup-in-ruby/"/>
+    <updated>2011-01-21T00:00:00-08:00</updated>
+    <id>http://jfirebaugh.github.com/blog/2011/01/21/making-sense-of-constant-lookup-in-ruby</id>
+    <content type="html"><![CDATA[<p>In Ruby 1.8, constant lookup is mostly <a
 href="http://en.wikipedia.org/wiki/Scope_(programming)#Lexical_versus_dynamic_scoping">lexically scoped</a>,
 even when using <tt>class_eval</tt> or <tt>instance_eval</tt>.
 That is, constant lookup always searches the chain of <em>lexically
@@ -452,42 +283,15 @@ end
 
 
 
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2010/12/22/selenium-on-ruby/">Selenium on Ruby</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-12-22T00:00:00-08:00" pubdate data-updated="true">Dec 22<span>nd</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>The state of Selenium on Ruby is a bit confusing. Among the top google results for
+  <entry>
+    <title type="html"><![CDATA[Selenium on Ruby]]></title>
+    <link href="http://jfirebaugh.github.com/blog/2010/12/22/selenium-on-ruby/"/>
+    <updated>2010-12-22T00:00:00-08:00</updated>
+    <id>http://jfirebaugh.github.com/blog/2010/12/22/selenium-on-ruby</id>
+    <content type="html"><![CDATA[<p>The state of Selenium on Ruby is a bit confusing. Among the top google results for
 <a href="http://www.google.com/search?q=selenium+ruby">&#8220;selenium ruby&#8221;</a> are several links that are badly out of date, and it&#8217;s
 not clear which of the many <a href="http://rubygems.org/search?utf8=%E2%9C%93&amp;amp;query=selenium">gems</a> are ones you would want
 to use. This post aims to clear up some of the confusion.</p>
@@ -534,130 +338,7 @@ to selenium-client and selenium-rc. They don&#8217;t seem widely used and at fir
 them to the more popular gems. Recent releases of the selenium-webdriver gem include the selenium-client code as well,
 and personally, I hope that selenium-webdriver can usurp the &#8220;selenium&#8221; gem name and become the One True Selenium gem
 for Ruby.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
-<aside class="sidebar">
-  
-    <section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2012/02/18/xcode-4-dot-3-homebrew-and-autoconf/">Xcode 4.3, homebrew, and autoconf</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2011/09/03/visualizing-sfpark-demand-responsive-meter-rate-adjustments/">Visualizing SFpark Demand-Responsive Meter Rate Adjustments</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2011/04/03/kernel-density-estimation-with-protovis/">Kernel Density Estimation with Protovis</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2011/01/21/making-sense-of-constant-lookup-in-ruby/">Making sense of constant lookup in Ruby</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/12/22/selenium-on-ruby/">Selenium on Ruby</a>
-      </li>
-    
-  </ul>
-</section>
-
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
-  </ul>
-  
-  <a href="https://github.com/jfirebaugh">@jfirebaugh</a> on GitHub
-  
-  <script type="text/javascript">
-    $.domReady(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'jfirebaugh',
-            count: 0,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-<section>
-  <h1>Latest Tweets</h1>
-  <ul id="tweets">
-    <li class="loading">Status updating&#8230;</li>
-  </ul>
-  <script type="text/javascript">
-    $.domReady(function(){
-      getTwitterFeed("jfire", 4, false);
-    });
-  </script>
-  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
-  
-    <a href="http://twitter.com/jfire" class="twitter-follow-button" data-show-count="false">Follow @jfire</a>
-  
-</section>
-
-
-
-
-
-  
-</aside>
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - John Firebaugh -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
-  
-
-
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
-</html>
+</feed>

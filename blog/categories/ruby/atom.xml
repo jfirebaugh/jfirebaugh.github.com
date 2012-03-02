@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Ruby | John Firebaugh]]></title>
+  <link href="http://jfirebaugh.github.com/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://jfirebaugh.github.com/"/>
+  <updated>2012-03-02T14:54:39-08:00</updated>
+  <id>http://jfirebaugh.github.com/</id>
+  <author>
+    <name><![CDATA[John Firebaugh]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Making sense of constant lookup in Ruby]]></title>
+    <link href="http://jfirebaugh.github.com/blog/2011/01/21/making-sense-of-constant-lookup-in-ruby/"/>
+    <updated>2011-01-21T00:00:00-08:00</updated>
+    <id>http://jfirebaugh.github.com/blog/2011/01/21/making-sense-of-constant-lookup-in-ruby</id>
+    <content type="html"><![CDATA[<p>In Ruby 1.8, constant lookup is mostly <a
+href="http://en.wikipedia.org/wiki/Scope_(programming)#Lexical_versus_dynamic_scoping">lexically scoped</a>,
+even when using <tt>class_eval</tt> or <tt>instance_eval</tt>.
+That is, constant lookup always searches the chain of <em>lexically
+enclosing</em> classes or modules. The first lexically enclosing class or
+module is not necessarily the same as <tt>self.class</tt>:</p>
+
+<p><div><script src='https://gist.github.com/790454.js?file=constants.rb'></script>
+<noscript><pre><code>puts &quot;#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}&quot;
+
+X = '::X'
+
+class Foo
+  X = 'Foo::X'
+
+  def foo
+    puts &quot;instance method: #{X}&quot;
+  end
+end
+
+Foo.new.foo
+
+f = Foo.new
+def f.bar
+  puts &quot;singleton method: #{X}&quot;
+end
+f.bar
+
+Foo.class_eval do
+  puts &quot;class_eval: #{X}&quot;
+end
+
+Foo.new.instance_eval do
+  puts &quot;instance_eval: #{X}&quot;
+end
+</code></pre></noscript></div>
+</p>
+
+<p>Here's the output on 1.8.7:</p>
+
+<p><div><script src='https://gist.github.com/790510.js?file='></script>
+<noscript><pre><code>1.8.7-p330
+instance method: Foo::X
+singleton method: ::X
+class_eval: ::X
+instance_eval: ::X</code></pre></noscript></div>
+</p>
+
+<p>Here we can see that within the lexical block defining <tt>Foo#foo</tt>, which
+is enclosed by <tt>class Foo</tt>, <tt>X</tt> refers to <tt>Foo::X</tt>, while
+in the lexical blocks used for the singleton method, <tt>class_eval</tt>, and
+<tt>instance_eval</tt>, which are not in <tt>class Foo</tt>'s scope,
+<tt>X</tt> refers to <tt>::X</tt>, the global constant.</p>
+
+<p>However, in 1.9, the situation changes, and moreover, the behavior is
+different between 1.9.1 and 1.9.2. Here's the result of running <tt><a
+href="http://rvm.beginrescueend.com/set/ruby/">rvm 1.9.1,1.9.2
+constants.rb</a></tt>:</p>
+
+<p><div><script src='https://gist.github.com/790511.js?file='></script>
+<noscript><pre><code>1.9.1-p378
+instance method: Foo::X
+singleton method: ::X
+class_eval: Foo::X
+instance_eval: Foo::X
+1.9.2-p136
+instance method: Foo::X
+singleton method: Foo::X
+class_eval: ::X
+instance_eval: Foo::X</code></pre></noscript></div>
+</p>
+
+<p>So, in 1.9.1, constant lookup in <tt>class_eval</tt> and
+<tt>instance_eval</tt> proceeds from the receiver, rather than the lexically
+enclosing scope. Particularly for <tt>class_eval</tt>, this turned out to be a
+<a href="http://www.ruby-forum.com/topic/191672">problematic</a> <a
+href="http://www.ruby-forum.com/topic/199317">change</a>, breaking existing
+libraries that depended on the 1.8.7 behavior and making it hard to build DSLs
+that behaved in predictable ways. Eventually, it was decided to <a
+href="http://www.ruby-forum.com/topic/199317#871425">revert to the 1.8
+behavior</a>, and this was supposedly implemented:</p>
+
+<blockquote><pre>
+&gt; [Matz] would like to revert all of instance_eval, instance_exec,
+&gt; class_eval, and class_exec to the behavior of 1.8 (including class
+&gt; variables). [...]
+
+I have just commited it to the SVN trunk.
+</pre></blockquote>
+
+
+<p>I say "supposedly" only because as you can see, the 1.9.2 behavior still
+differs from 1.8.7 in the case of <tt>instance_eval</tt>. Was this an
+oversight, or was the revert later unreverted for&nbsp;<span
+style="font-family: monospace;">instance_eval</span>? If so, what was the
+rationale? I searched the mailing list and subsequent commits, but couldn't
+find an explanation. If anyone can shed light on the matter, I would
+appreciate it.</p>
+
+<p>As you can see, 1.9.2 also changed the behavior for singleton methods: the
+receiver's scope is now searched before the lexically enclosing scope. This
+change makes sense to me, and I haven't heard of it causing any problems.</p>
+
+<p>Note that these rules apply to constant <em>definition</em>&nbsp;as well as
+lookup. In 1.8 and 1.9.2, a constant defined in a class_evaluated block will
+be defined in the enclosing lexical scope, rather than the scope of the
+receiver. This is one of the things that makes <tt>Foo = Class.new { ...
+}</tt> not <em>quite</em> the same as <tt>class Foo; ...; end</tt>:</p>
+
+<p><div><script src='https://gist.github.com/790492.js?file='></script>
+<noscript><pre><code>puts &quot;#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}&quot;
+
+class Foo
+  class Bar
+  end
+end
+
+Baz = Class.new do
+  class Quux
+  end
+end
+
+puts Foo::Bar
+puts Quux
+</code></pre></noscript></div>
+</p>
+
+<p>The block passed to <tt>Class.new</tt> is effectively
+<tt>class_eval</tt>uated, so in this example, the constant <tt>Quux</tt> ends
+up defined at the top level. (And once again 1.9.1 is the exception: it
+defines <tt>Baz::Quux</tt> instead.) This behavior can cause problems if you
+are in the habit of defining test classes in RSpec <tt>describe</tt> blocks:</p>
+
+<p><div><script src='https://gist.github.com/790496.js?file='></script>
+<noscript><pre><code>require 'rspec'
+
+describe &quot;a TestClass&quot; do
+  class TestClass &lt; String
+  end
+end
+
+describe &quot;other TestClass&quot; do
+  class TestClass &lt; Integer
+  end
+end
+</code></pre></noscript></div>
+</p>
+
+<p>Here <tt>TestClass</tt> winds up in the global scope, not the scope of the
+RSpec example group that <tt>describe</tt> creates. If you have multiple specs
+that define test classes with the same name, you may get collisions unless you
+place each <tt>describe</tt> within a uniquely-named module or diligently
+remove the constants in an <tt>after</tt> block. In the above example, you'll
+get the error "superclass mismatch for class TestClass".</p>
+
+<p>If you need to ensure a particular scoping is used (for example, if you need
+to support 1.9.1 as well as 1.8.7/1.9.2), you can always be explicit about it
+by prefixing constants with <tt>::</tt> (for global lookup), <tt>self::</tt>
+(for receiver scope), or the fully qualified desired scope:</p>
+
+<p><div><script src='https://gist.github.com/790500.js?file='></script>
+<noscript><pre><code>require 'rspec'
+
+describe &quot;a TestClass&quot; do
+  class self::TestClass &lt; String
+  end
+end
+
+describe &quot;other TestClass&quot; do
+  class ::TestClass &lt; Integer
+  end
+end
+
+module A
+  module B
+  end
+end
+
+describe &quot;third TestClass&quot; do
+  class A::B::TestClass &lt; Integer
+  end
+end
+</code></pre></noscript></div>
+</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Selenium on Ruby]]></title>
+    <link href="http://jfirebaugh.github.com/blog/2010/12/22/selenium-on-ruby/"/>
+    <updated>2010-12-22T00:00:00-08:00</updated>
+    <id>http://jfirebaugh.github.com/blog/2010/12/22/selenium-on-ruby</id>
+    <content type="html"><![CDATA[<p>The state of Selenium on Ruby is a bit confusing. Among the top google results for
+<a href="http://www.google.com/search?q=selenium+ruby">"selenium ruby"</a> are several links that are badly out of date, and it's
+not clear which of the many <a href="http://rubygems.org/search?utf8=%E2%9C%93&amp;amp;query=selenium">gems</a> are ones you would want
+to use. This post aims to clear up some of the confusion.</p>
+
+<p>First of all, you should be aware that there are two Selenium APIs: the original 1.0 API, called Selenium-RC, and a
+newer 2.0 API called Selenium WebDriver. Internally, the two have quite different architectures. In a nutshell,
+Selenium-RC is based around a Java "Remote Control" server process that launches the browser under test and manages
+communication between the client process (the Ruby interpreter, in our case) and the browser. The browser is controlled
+by injecting the "Selenium Core" JavaScript framework into the Browser's built-in JavaScript interpreter. In contrast,
+WebDriver requires no external process; the browser is launched directly, and controlled via means that vary from
+browser to browser. For example, WebDriver controls Firefox via a custom Firefox extension.</p>
+
+<p>Ruby has good support for both RC and WebDriver. The <a href="http://rubygems.org/gems/selenium-client">selenium-client</a> gem
+(<a href="http://selenium-client.rubyforge.org/">docs</a>, <a href="https://github.com/ph7/selenium-client">source</a>) provides bindings for
+the RC API, and the <a href="http://rubygems.org/gems/selenium-webdriver">selenium-webdriver</a> gem
+(<a href="http://code.google.com/p/selenium/wiki/RubyBindings">wiki</a>,
+<a href="http://selenium.googlecode.com/svn/trunk/docs/api/rb/index.html">docs</a>,
+<a href="http://code.google.com/p/selenium/source/browse/#svn%2Ftrunk%2Frb">source</a>) provides bindings for the WebDriver API.
+You will likely want to use one of these two gems, but which one? If you are using Selenium via a higher-level Ruby
+library such as Webrat or Capybara, the choice will be made for you: Webrat uses selenium-client, Capybara uses
+selenium-webdriver. If you want to access a Selenium API directly, I would generally recommend selenium-webdriver.
+The WebDriver API provides several advantages, including multi-browser testing, page navigation, drag-and-drop, and
+multi-frame and multi-window support. It recently released its
+<a href="http://groups.google.com/group/selenium-users/browse_thread/thread/28ce2b37123a4e4d">first beta</a> and is where the
+future of Selenium and Selenium on Ruby lies. It is, however, still beta software and sometimes changes its API in
+aggravating ways. If stability is of paramount concern, stick with selenium-client.</p>
+
+<p>You may find references to some other Selenium-related Ruby projects. The <a href="http://rubygems.org/gems/Selenium">Selenium</a>
+gem (with a capital "S") and its associated website <a href="http://selenium.rubyforge.org/">selenium.rubyforge.org</a> paved the
+way for Selenium on Ruby, but today it is obsolete, as is the <a href="http://rubygems.org/gems/selenium-rails">selenium-rails</a>
+gem which depends on it. Unfortunately they are still prominently featured in search results and on the
+<a href="http://seleniumhq.org/projects/ruby/">outdated "Selenium on Ruby" page</a>, which doesn't even mention selenium-webdriver.</p>
+
+<p>The Selenium RC API relies on an external Java-based server process, and though the selenium-client gem provides rake
+tasks to start and stop an RC server, it does not provide the actual jar file necessary to run the service. You can
+either download and install it yourself, or install the <a href="http://rubygems.org/gems/selenium-rc">selenium-rc</a> gem, which
+bundles it. You'll sometimes see a gem that depends on selenium-client also depending on selenium-rc solely for the jar,
+as the <a href="https://github.com/pivotal/jasmine-gem">jasmine</a> gem does. The selenium-rc gem has some Ruby code in it too, but
+it more or less duplicates functionality that's already part of selenium-client.</p>
+
+<p>Finally there's the <a href="http://rubygems.org/gems/selenium">selenium</a> and
+<a href="http://rubygems.org/gems/selenium_remote_control">selenium_remote_control</a> gems, which provide functionality similar
+to selenium-client and selenium-rc. They don't seem widely used and at first glance I don't see any reason to prefer
+them to the more popular gems. Recent releases of the selenium-webdriver gem include the selenium-client code as well,
+and personally, I hope that selenium-webdriver can usurp the "selenium" gem name and become the One True Selenium gem
+for Ruby.</p>
+]]></content>
+  </entry>
+  
+</feed>
