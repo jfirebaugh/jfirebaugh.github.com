@@ -219,10 +219,22 @@ At that point, you&#8217;ll be able to <code>brew install autoconf</code> direct
             s.parentNode.insertBefore(jxhr, s);
         }
 
+        var blacklist = [];
+        
+          
+            blacklist.push('dotfiles');
+          
+            blacklist.push('jfirebaugh.github.com');
+          
+            blacklist.push('matcha');
+          
+        
+
         github.showRepos({
             user: 'jfirebaugh',
             count: 0,
             skip_forks: true,
+            blacklist: blacklist,
             target: '#gh_repos'
         });
     });
