@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Xcode | John Firebaugh]]></title>
-  <link href="http://jfirebaugh.github.com/blog/categories/xcode/atom.xml" rel="self"/>
+  <title><![CDATA[Category: RVM | John Firebaugh]]></title>
+  <link href="http://jfirebaugh.github.com/blog/categories/rvm/atom.xml" rel="self"/>
   <link href="http://jfirebaugh.github.com/"/>
   <updated>2012-03-03T19:34:34-08:00</updated>
   <id>http://jfirebaugh.github.com/</id>
