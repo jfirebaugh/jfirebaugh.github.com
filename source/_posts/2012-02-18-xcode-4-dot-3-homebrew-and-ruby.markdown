@@ -19,7 +19,7 @@ If you want a TL;DR: install the Xcode 4.3 command line tools. Then,
 ```
 $ brew update
 $ brew install autoconf automake
-$ brew install https://raw.github.com/adamv/homebrew-alt/master/duplicates/apple-gcc42.rb
+$ brew install https://raw.github.com/Homebrew/homebrew-dupes/master/apple-gcc42.rb
 $ rvm get head
 $ rvm install 1.8.7
 $ rvm install 1.9.3-head
@@ -52,9 +52,9 @@ autotools for installing homebrew formulas, since the downloaded packages
 should come with `configure` pregenerated, but you do need them in order to
 install head versions of MRI as described below.
 
-Second, install gcc--the real version--from homebrew-alt:
+Second, install gcc--the real version--from homebrew-dupes:
 
-    $ brew install https://raw.github.com/adamv/homebrew-alt/master/duplicates/apple-gcc42.rb
+    $ brew install https://raw.github.com/Homebrew/homebrew-dupes/master/apple-gcc42.rb
 
 The command line tools provide `/usr/bin/gcc`, but it's a modified version
 based on LLVM and if you try to use it to compile 1.8.7,
