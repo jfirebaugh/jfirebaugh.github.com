@@ -4,7 +4,7 @@
   <title><![CDATA[John Firebaugh]]></title>
   <link href="http://jfirebaugh.github.com/atom.xml" rel="self"/>
   <link href="http://jfirebaugh.github.com/"/>
-  <updated>2012-03-07T22:39:43-08:00</updated>
+  <updated>2012-03-19T19:25:27-07:00</updated>
   <id>http://jfirebaugh.github.com/</id>
   <author>
     <name><![CDATA[John Firebaugh]]></name>
@@ -270,7 +270,7 @@ running MRI 1.9.3 and 1.8.7 on Lion with Xcode 4.3.</p>
 <span class='line-number'>6</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>$ brew update
 </span><span class='line'>$ brew install autoconf automake
-</span><span class='line'>$ brew install https://raw.github.com/adamv/homebrew-alt/master/duplicates/apple-gcc42.rb
+</span><span class='line'>$ brew install https://raw.github.com/Homebrew/homebrew-dupes/master/apple-gcc42.rb
 </span><span class='line'>$ rvm get head
 </span><span class='line'>$ rvm install 1.8.7
 </span><span class='line'>$ rvm install 1.9.3-head</span></code></pre></td></tr></table></div></figure>
@@ -304,9 +304,9 @@ autotools for installing homebrew formulas, since the downloaded packages
 should come with <code>configure</code> pregenerated, but you do need them in order to
 install head versions of MRI as described below.</p>
 
-<p>Second, install gcc&#8211;the real version&#8211;from homebrew-alt:</p>
+<p>Second, install gcc&#8211;the real version&#8211;from homebrew-dupes:</p>
 
-<pre><code>$ brew install https://raw.github.com/adamv/homebrew-alt/master/duplicates/apple-gcc42.rb
+<pre><code>$ brew install https://raw.github.com/Homebrew/homebrew-dupes/master/apple-gcc42.rb
 </code></pre>
 
 <p>The command line tools provide <code>/usr/bin/gcc</code>, but it&#8217;s a modified version
