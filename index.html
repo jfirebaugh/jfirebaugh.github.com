@@ -9,8 +9,8 @@
   <meta name="author" content="John Firebaugh">
 
   
-  <meta name="description" content="Have you ever dug through the commit history of an open source project, peeling
-away layers, sifting for clues, trying to answer the question, &#8220 &hellip;">
+  <meta name="description" content="Like model classes in many other JavaScript MVC frameworks, Ember.Object uses
+get()/set()-based property accessor functions rather than native &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,119 @@ away layers, sifting for clues, trying to answer the question, &#8220 &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/04/19/why-ember-dot-js-doesnt-use-property-descriptors/">Why Ember.js Doesn&#8217;t Use Property Descriptors</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-19T08:11:00-07:00" pubdate data-updated="true">Apr 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Like model classes in many other JavaScript MVC frameworks, <code>Ember.Object</code> uses
+<code>get()</code>/<code>set()</code>-based property accessor functions rather than native JavaScript
+properties:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">MyApp</span><span class="p">.</span><span class="nx">president</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Barack Obama&quot;</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">MyApp</span><span class="p">.</span><span class="nx">president</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span> <span class="c1">// Not `MyApp.president.name`</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Of course, Ember provides computed properties and property bindings, features
+that plain JavaScript properties don&#8217;t support. Fortunately, ECMAScript 5 includes
+<em><a href="http://ejohn.org/blog/ecmascript-5-objects-and-properties/">property descriptors</a></em>, and in particular, the
+<a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object/defineProperty"><code>Object.defineProperty()</code></a>
+method. <code>Object.defineProperty</code> allows you to specify a function to serve as a
+getter for the property (for example, to implement a computed property) and a
+corresponding function to serve as a setter (which can be used to implement
+properties that notify their observers when they change). So why doesn&#8217;t Ember
+use property descriptors to provide more natural, less intrusive object properties?</p>
+
+<p>Browser compatibility is only part of the answer. Browser support for property
+descriptors is actually reasonably decent: present on Firefox, Chrome, Safari, and
+Opera (naturally), and IE >= 9. For applications that can afford to drop IE 8 support,
+particularly mobile apps, property descriptor-based model objects would work great.</p>
+
+<p>The other part of the answer is that Ember provides a feature that goes beyond what
+property descriptors can support: <em>unknown properties</em>. This is a feature akin to
+Ruby&#8217;s <code>method_missing</code>, where you can define a handler that&#8217;s called upon access
+to a property you haven&#8217;t explicitly defined:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">MyApp</span><span class="p">.</span><span class="nx">president</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">unknownProperty</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">key</span> <span class="o">===</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;Barack Obama&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">MyApp</span><span class="p">.</span><span class="nx">president</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span> <span class="c1">//=&gt; &quot;Barack Obama&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Property descriptors do not allow you to define a function that&#8217;s called when a
+previously undefined property is accessed or assigned. Accesses of undefined properties
+simply produce <code>undefined</code>, and without a previously installed setter function the
+object has no way of detecting assignment to a previously undefined property,
+which it needs to be able to do in order to notify observers of the change. So
+Ember needs something more than property descriptors in order to support
+unknown properties.</p>
+
+<p>Good news: that &#8220;something more&#8221; is on the horizon, in the form of
+<a href="http://wiki.ecmascript.org/doku.php?id=harmony:direct_proxies">object proxies</a>, a
+language feature slated for ECMAScript Harmony, the next release of the JavaScript
+standard. Object proxies allow you to create a virtualized object that wraps a
+given target object. The key feature for Ember is that <code>get</code> and <code>set</code> are part
+of the proxy API, permitting the wrapper to intercept and handle all property
+accesses and assignments, even for unknown properties.</p>
+
+<p>Bad news: it will be awhile before support for object proxies is widespread. Currently,
+support is limited to <a href="https://developer.mozilla.org/en/JavaScript/ECMAScript_6_support_in_Mozilla">Firefox</a>
+and <a href="https://plus.google.com/113127438179392830442/posts/T615Md5JPQG">Chrome</a>
+(after enabling &#8220;Experimental JavaScript&#8221; in <code>chrome://flags</code>),
+both of which actually support an older, slightly different proxy specification.</p>
+
+<p>Thanks to <a href="https://twitter.com/#!/tomdale">Tom Dale</a> for answering this question
+for me. Any inaccuracies in the above are my own.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -937,6 +1050,10 @@ for Ruby.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/04/19/why-ember-dot-js-doesnt-use-property-descriptors/">Why Ember.js doesn&#8217;t use property descriptors</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/03/07/code-archaeology-with-git/">Code Archaeology with Git</a>
       </li>
     
@@ -950,10 +1067,6 @@ for Ruby.</p>
     
       <li class="post">
         <a href="/blog/2011/04/03/kernel-density-estimation-with-protovis/">Kernel Density Estimation with Protovis</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2011/01/21/making-sense-of-constant-lookup-in-ruby/">Making sense of constant lookup in Ruby</a>
       </li>
     
   </ul>
