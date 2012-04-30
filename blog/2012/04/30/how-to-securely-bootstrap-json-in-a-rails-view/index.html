@@ -226,7 +226,7 @@ that:</p>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">module</span> <span class="nn">ERB::Util</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">ActionView</span><span class="o">::</span><span class="no">Base</span>
 </span><span class='line'>  <span class="k">def</span> <span class="nf">json_escape</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 </span><span class='line'>    <span class="n">result</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;\/&#39;</span><span class="p">)</span>
 </span><span class='line'>    <span class="n">s</span><span class="o">.</span><span class="n">html_safe?</span> <span class="p">?</span> <span class="n">result</span><span class="o">.</span><span class="n">html_safe</span> <span class="p">:</span> <span class="n">result</span>
