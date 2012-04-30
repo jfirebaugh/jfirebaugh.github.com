@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rails | John Firebaugh]]></title>
   <link href="http://jfirebaugh.github.com/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://jfirebaugh.github.com/"/>
-  <updated>2012-04-30T13:29:21-07:00</updated>
+  <updated>2012-04-30T13:31:18-07:00</updated>
   <id>http://jfirebaugh.github.com/</id>
   <author>
     <name><![CDATA[John Firebaugh]]></name>
@@ -110,7 +110,7 @@ also <em>removes</em> double quote (<code>"</code>) characters. Yes, that's righ
 is <a href="http://api.rubyonrails.org/classes/ERB/Util.html#method-c-json_escape">documented</a>
 to return invalid JSON. This baffling behavior is most likely a mistake in the
 <a href="https://github.com/rails/rails/commit/0ff7a2d89fc95dcb0a32ed92aab7156b0778a7ea">original implementation</a>.
-I've submitted a pull request to change it, which will hopefully be accepted for Rails 4.</p>
+I've submitted a <a href="https://github.com/rails/rails/pull/6094">pull request</a> to change it, which will hopefully be accepted for Rails 4.</p>
 
 <p>A second attempt might be to try <a href="http://api.rubyonrails.org/classes/ActionView/Helpers/JavaScriptHelper.html#method-i-escape_javascript"><code>escape_javascript</code></a>,
 but this escapes much more than necessary. It could probably be made to work, but would
