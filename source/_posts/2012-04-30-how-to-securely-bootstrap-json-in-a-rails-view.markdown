@@ -81,7 +81,7 @@ also _removes_ double quote (`"`) characters. Yes, that's right, `json_escape`
 is [documented](http://api.rubyonrails.org/classes/ERB/Util.html#method-c-json_escape)
 to return invalid JSON. This baffling behavior is most likely a mistake in the
 [original implementation](https://github.com/rails/rails/commit/0ff7a2d89fc95dcb0a32ed92aab7156b0778a7ea).
-I've submitted a pull request to change it, which will hopefully be accepted for Rails 4.
+I've submitted a [pull request](https://github.com/rails/rails/pull/6094) to change it, which will hopefully be accepted for Rails 4.
 
 A second attempt might be to try [`escape_javascript`](http://api.rubyonrails.org/classes/ActionView/Helpers/JavaScriptHelper.html#method-i-escape_javascript),
 but this escapes much more than necessary. It could probably be made to work, but would
