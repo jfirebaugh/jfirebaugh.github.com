@@ -5,7 +5,7 @@ date: 2012-04-30 10:13
 comments: true
 categories: [Rails, Security, XSS]
 ---
-A common pattern with client-side MVC applications is to embed the data for an
+A common pattern with client-side MVC applications is to embed the data for a
 base set of models in the initial page instead of making a separate AJAX request to
 load them. In a Rails application, this is typically done by interpolating the
 result of a call to `to_json` in the view. The [Backbone.js docs](http://backbonejs.org/#FAQ-bootstrap)
