@@ -99,7 +99,7 @@ My recommendation is to overwrite `json_escape` with a sensible definition and u
 that:
 
 ``` ruby config/initializers/json_escape.rb
-module ERB::Util
+class ActionView::Base
   def json_escape(s)
     result = s.to_s.gsub('/', '\/')
     s.html_safe? ? result.html_safe : result
