@@ -1,0 +1,461 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>How to securely bootstrap JSON in a Rails view - John Firebaugh</title>
+  <meta name="author" content="John Firebaugh">
+
+  
+  <meta name="description" content="A common pattern with client-side MVC applications is to embed the data for an
+base set of models in the initial page instead of making a separate &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://jfirebaugh.github.com/blog/2012/04/30/how-to-securely-bootstrap-json-in-a-rails-view">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="John Firebaugh" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-29668835-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">John Firebaugh</a></h1>
+  
+    <h2>Open Source, Ruby, Rubinius, RubySpec, Rails.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:jfirebaugh.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">How to Securely Bootstrap JSON in a Rails View</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-30T10:13:00-07:00" pubdate data-updated="true">Apr 30<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>A common pattern with client-side MVC applications is to embed the data for an
+base set of models in the initial page instead of making a separate AJAX request to
+load them. In a Rails application, this is typically done by interpolating the
+result of a call to <code>to_json</code> in the view. The <a href="http://backbonejs.org/#FAQ-bootstrap">Backbone.js docs</a>
+provide this example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='erb'><span class='line'><span class="x">&lt;script&gt;</span>
+</span><span class='line'><span class="x">  var Accounts = new Backbone.Collection;</span>
+</span><span class='line'><span class="x">  Accounts.reset(</span><span class="cp">&lt;%=</span> <span class="vi">@accounts</span><span class="o">.</span><span class="n">to_json</span> <span class="cp">%&gt;</span><span class="x">);</span>
+</span><span class='line'><span class="x">  var Projects = new Backbone.Collection;</span>
+</span><span class='line'><span class="x">  Projects.reset(</span><span class="cp">&lt;%=</span> <span class="vi">@projects</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="ss">:collaborators</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="x">);</span>
+</span><span class='line'><span class="x">&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you try this in a Rails 3 application, you will discover that by default,
+the interpolated results of <code>to_json</code> are HTML-escaped: <code>&amp;</code>, <code>&gt;</code>, <code>&lt;</code>, and <code>"</code>
+are replaced with the equivalent HTML entities. Inside the script tag, this is
+almost certainly not what you want. JSON strings containing <code>&amp;</code>, <code>&gt;</code>, and <code>&lt;</code>
+should contain those characters literally, and the <code>"</code> character delimits the
+JSON strings themselves. Escaping them prevents the desired result:
+a literal JavaScript value embedded in the script.</p>
+
+<p>The common reaction is to disable HTML escaping, either by prepending the call
+to <code>to_json</code> with the <code>raw</code> helper, or calling <code>html_safe</code> on the result. Here&#8217;s
+the same example using each of these techniques:</p>
+
+<figure class='code'><figcaption><span>DO NOT FOLLOW THIS EXAMPLE</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='erb'><span class='line'><span class="x">&lt;script&gt;</span>
+</span><span class='line'><span class="x">  var Accounts = new Backbone.Collection;</span>
+</span><span class='line'><span class="x">  Accounts.reset(</span><span class="cp">&lt;%=</span> <span class="n">raw</span> <span class="vi">@accounts</span><span class="o">.</span><span class="n">to_json</span> <span class="cp">%&gt;</span><span class="x">);</span>
+</span><span class='line'><span class="x">  var Projects = new Backbone.Collection;</span>
+</span><span class='line'><span class="x">  Projects.reset(</span><span class="cp">&lt;%=</span> <span class="vi">@projects</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="ss">:collaborators</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">)</span><span class="o">.</span><span class="n">html_safe</span> <span class="cp">%&gt;</span><span class="x">);</span>
+</span><span class='line'><span class="x">&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>Do not follow this example!</em> Used in this way, both <code>raw</code> and <code>html_safe</code> open
+vectors for a cross-site scripting vulnerability, and it is unfortunate that their
+use is <a href="https://github.com/search?utf8=%E2%9C%93&amp;q=raw+to_json&amp;repo=&amp;langOverride=&amp;start_value=1&amp;type=Code&amp;language=HTML%2BERB">so</a>
+<a href="https://github.com/search?utf8=%E2%9C%93&amp;q=to_json+html_safe&amp;repo=&amp;langOverride=&amp;start_value=1&amp;type=Code&amp;language=HTML%2BERB">widespread</a> and
+commonly <a href="http://stackoverflow.com/a/3758055/52207">recommended</a>.</p>
+
+<p>To understand the vulnerability, consider what happens if one of the strings
+in the JSON contains the text <code>&lt;/script&gt;</code>. This text is interpolated
+into the page, and since both <code>raw</code> and <code>html_safe</code> disable HTML-escaping, it
+is interpolated literally. As a consequence, and despite the fact that it appears
+within a JavaScript string literal, <code>&lt;/script&gt;</code> <a href="http://mathiasbynens.be/notes/etago">closes the script element</a>,
+leaving an opportunity to embed an XSS payload in the subsequent text:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script&gt;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">Accounts</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">;</span>
+</span><span class='line'>  <span class="nx">Accounts</span><span class="p">.</span><span class="nx">reset</span><span class="p">([{</span><span class="nx">name</span><span class="o">:</span> <span class="err">&quot;</span><span class="nt">&lt;/script&gt;&lt;script&gt;</span><span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;xss&#39;</span><span class="p">)</span><span class="nt">&lt;/script&gt;</span>&quot;, ...}]);
+</span><span class='line'>  // ...
+</span><span class='line'><span class="nt">&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The simplest way to escape JSON strings that may contain the <code>&lt;/</code> sequence
+is to precede the slash with a backslash. Though simple to do, this should be built
+in to Rails. Unfortunately, it is not. The obvious candidate would be <code>json_escape</code>,
+aliased as <code>j</code>, which one would expect to be the JSON analog of the old Rails 2 <code>h</code> helper
+for HTML escaping:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='erb'><span class='line'><span class="x">&lt;script&gt;</span>
+</span><span class='line'><span class="x">  var Accounts = new Backbone.Collection;</span>
+</span><span class='line'><span class="x">  Accounts.reset(</span><span class="cp">&lt;%=</span><span class="n">j</span> <span class="vi">@accounts</span><span class="o">.</span><span class="n">to_json</span> <span class="cp">%&gt;</span><span class="x">);</span>
+</span><span class='line'><span class="x">  // ...</span>
+</span><span class='line'><span class="x">&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>However, in addition to escaping the JSON in a way that prevents XSS, <code>json_escape</code>
+also <em>removes</em> double quote (<code>"</code>) characters. Yes, that&#8217;s right, <code>json_escape</code>
+is <a href="http://api.rubyonrails.org/classes/ERB/Util.html#method-c-json_escape">documented</a>
+to return invalid JSON. This baffling behavior is most likely a mistake in the
+<a href="https://github.com/rails/rails/commit/0ff7a2d89fc95dcb0a32ed92aab7156b0778a7ea">original implementation</a>.
+I&#8217;ve submitted a pull request to change it, which will hopefully be accepted for Rails 4.</p>
+
+<p>A second attempt might be to try <a href="http://api.rubyonrails.org/classes/ActionView/Helpers/JavaScriptHelper.html#method-i-escape_javascript"><code>escape_javascript</code></a>,
+but this escapes much more than necessary. It could probably be made to work, but would
+require parsing JSON on the client rather than simply interpolating a literal JavaScript
+value.</p>
+
+<p>Finally, there&#8217;s the option of setting <code>ActiveSupport::JSON::Encoding.escape_html_entities_in_json</code>
+to true. This works, but since the default was <a href="https://github.com/rails/rails/commit/6042067c0b20602e72954450e9e8a19dfa8a9f7d">explicitly changed to false</a>
+in Rails 3, it feels like a workaround at best. If you change the default globally, be sure
+that any consumers of JSON APIs provided by your application are prepared to handle
+Unicode escape sequences, because it will result in <code>&lt;/script&gt;</code> being escaped as
+<code>\u003C/script\u003E</code> rather than <code>&lt;\/script&gt;</code>.</p>
+
+<p>My recommendation is to overwrite <code>json_escape</code> with a sensible definition and use
+that:</p>
+
+<figure class='code'><figcaption><span>config/initializers/json_escape.rb</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">module</span> <span class="nn">ERB::Util</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">json_escape</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">result</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;\/&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">s</span><span class="o">.</span><span class="n">html_safe?</span> <span class="p">?</span> <span class="n">result</span><span class="o">.</span><span class="n">html_safe</span> <span class="p">:</span> <span class="n">result</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">alias</span> <span class="n">j</span> <span class="n">json_escape</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>view.html.erb</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='erb'><span class='line'><span class="x">&lt;script&gt;</span>
+</span><span class='line'><span class="x">  var Accounts = new Backbone.Collection;</span>
+</span><span class='line'><span class="x">  Accounts.reset(</span><span class="cp">&lt;%=</span><span class="n">j</span> <span class="vi">@accounts</span><span class="o">.</span><span class="n">to_json</span><span class="o">.</span><span class="n">html_safe</span> <span class="cp">%&gt;</span><span class="x">);</span>
+</span><span class='line'><span class="x">  var Projects = new Backbone.Collection;</span>
+</span><span class='line'><span class="x">  Projects.reset(</span><span class="cp">&lt;%=</span><span class="n">j</span> <span class="vi">@projects</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="ss">:collaborators</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">)</span><span class="o">.</span><span class="n">html_safe</span> <span class="cp">%&gt;</span><span class="x">);</span>
+</span><span class='line'><span class="x">&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is simple, sufficient to prevent XSS from bootstrapped JSON, and will hopefully
+be the built-in behavior of <code>json_escape</code>/<code>j</code> in Rails 4.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">John Firebaugh</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-30T10:13:00-07:00" pubdate data-updated="true">Apr 30<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rails/'>Rails</a>, <a class='category' href='/blog/categories/security/'>Security</a>, <a class='category' href='/blog/categories/xss/'>XSS</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://jfirebaugh.github.com/blog/2012/04/30/how-to-securely-bootstrap-json-in-a-rails-view/" data-via="jfire" data-counturl="http://jfirebaugh.github.com/blog/2012/04/30/how-to-securely-bootstrap-json-in-a-rails-view/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/04/19/why-ember-dot-js-doesnt-use-property-descriptors/" title="Previous Post: Why Ember.js doesn't use property descriptors">&laquo; Why Ember.js doesn't use property descriptors</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/04/30/how-to-securely-bootstrap-json-in-a-rails-view/">How to securely bootstrap JSON in a Rails view</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/04/19/why-ember-dot-js-doesnt-use-property-descriptors/">Why Ember.js doesn't use property descriptors</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/07/code-archaeology-with-git/">Code Archaeology with Git</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/02/xcode-4-dot-3-homebrew-and-ruby/">Xcode 4.3, homebrew, and Ruby</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/03/visualizing-sfpark-demand-responsive-meter-rate-adjustments/">Visualizing SFpark Demand-Responsive Meter Rate Adjustments</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/jfirebaugh">@jfirebaugh</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        var blacklist = [];
+        
+          
+            blacklist.push('dotfiles');
+          
+            blacklist.push('jfirebaugh.github.com');
+          
+            blacklist.push('matcha');
+          
+        
+
+        github.showRepos({
+            user: 'jfirebaugh',
+            count: 0,
+            skip_forks: true,
+            blacklist: blacklist,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("jfire", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/jfire" class="twitter-follow-button" data-show-count="false">Follow @jfire</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - John Firebaugh -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'jfire-io';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://jfirebaugh.github.com/blog/2012/04/30/how-to-securely-bootstrap-json-in-a-rails-view/';
+        var disqus_url = 'http://jfirebaugh.github.com/blog/2012/04/30/how-to-securely-bootstrap-json-in-a-rails-view/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

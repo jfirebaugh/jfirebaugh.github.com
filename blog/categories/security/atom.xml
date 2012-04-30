@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Security | John Firebaugh]]></title>
+  <link href="http://jfirebaugh.github.com/blog/categories/security/atom.xml" rel="self"/>
+  <link href="http://jfirebaugh.github.com/"/>
+  <updated>2012-04-30T13:29:21-07:00</updated>
+  <id>http://jfirebaugh.github.com/</id>
+  <author>
+    <name><![CDATA[John Firebaugh]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[How to securely bootstrap JSON in a Rails view]]></title>
+    <link href="http://jfirebaugh.github.com/blog/2012/04/30/how-to-securely-bootstrap-json-in-a-rails-view/"/>
+    <updated>2012-04-30T10:13:00-07:00</updated>
+    <id>http://jfirebaugh.github.com/blog/2012/04/30/how-to-securely-bootstrap-json-in-a-rails-view</id>
+    <content type="html"><![CDATA[<p>A common pattern with client-side MVC applications is to embed the data for an
+base set of models in the initial page instead of making a separate AJAX request to
+load them. In a Rails application, this is typically done by interpolating the
+result of a call to <code>to_json</code> in the view. The <a href="http://backbonejs.org/#FAQ-bootstrap">Backbone.js docs</a>
+provide this example:</p>
+
+<p>``` erb</p>
+
+<script>
+  var Accounts = new Backbone.Collection;
+  Accounts.reset(<%= @accounts.to_json %>);
+  var Projects = new Backbone.Collection;
+  Projects.reset(<%= @projects.to_json(:collaborators => true) %>);
+</script>
+
+
+<p>```</p>
+
+<p>If you try this in a Rails 3 application, you will discover that by default,
+the interpolated results of <code>to_json</code> are HTML-escaped: <code>&amp;</code>, <code>&gt;</code>, <code>&lt;</code>, and <code>"</code>
+are replaced with the equivalent HTML entities. Inside the script tag, this is
+almost certainly not what you want. JSON strings containing <code>&amp;</code>, <code>&gt;</code>, and <code>&lt;</code>
+should contain those characters literally, and the <code>"</code> character delimits the
+JSON strings themselves. Escaping them prevents the desired result:
+a literal JavaScript value embedded in the script.</p>
+
+<p>The common reaction is to disable HTML escaping, either by prepending the call
+to <code>to_json</code> with the <code>raw</code> helper, or calling <code>html_safe</code> on the result. Here's
+the same example using each of these techniques:</p>
+
+<p>``` erb DO NOT FOLLOW THIS EXAMPLE</p>
+
+<script>
+  var Accounts = new Backbone.Collection;
+  Accounts.reset(<%= raw @accounts.to_json %>);
+  var Projects = new Backbone.Collection;
+  Projects.reset(<%= @projects.to_json(:collaborators => true).html_safe %>);
+</script>
+
+
+<p>```</p>
+
+<p><em>Do not follow this example!</em> Used in this way, both <code>raw</code> and <code>html_safe</code> open
+vectors for a cross-site scripting vulnerability, and it is unfortunate that their
+use is <a href="https://github.com/search?utf8=%E2%9C%93&amp;q=raw+to_json&amp;repo=&amp;langOverride=&amp;start_value=1&amp;type=Code&amp;language=HTML%2BERB">so</a>
+<a href="https://github.com/search?utf8=%E2%9C%93&amp;q=to_json+html_safe&amp;repo=&amp;langOverride=&amp;start_value=1&amp;type=Code&amp;language=HTML%2BERB">widespread</a> and
+commonly <a href="http://stackoverflow.com/a/3758055/52207">recommended</a>.</p>
+
+<p>To understand the vulnerability, consider what happens if one of the strings
+in the JSON contains the text <code>&lt;/script&gt;</code>. This text is interpolated
+into the page, and since both <code>raw</code> and <code>html_safe</code> disable HTML-escaping, it
+is interpolated literally. As a consequence, and despite the fact that it appears
+within a JavaScript string literal, <code>&lt;/script&gt;</code> <a href="http://mathiasbynens.be/notes/etago">closes the script element</a>,
+leaving an opportunity to embed an XSS payload in the subsequent text:</p>
+
+<p>``` html</p>
+
+<script>
+  var Accounts = new Backbone.Collection;
+  Accounts.reset([{name: "</script>
+
+
+<script>alert('xss')</script>
+
+
+<p>", ...}]);
+  // ...
+</script>
+```</p>
+
+<p>The simplest way to escape JSON strings that may contain the <code>&lt;/</code> sequence
+is to precede the slash with a backslash. Though simple to do, this should be built
+in to Rails. Unfortunately, it is not. The obvious candidate would be <code>json_escape</code>,
+aliased as <code>j</code>, which one would expect to be the JSON analog of the old Rails 2 <code>h</code> helper
+for HTML escaping:</p>
+
+<p>``` erb</p>
+
+<script>
+  var Accounts = new Backbone.Collection;
+  Accounts.reset(<%=j @accounts.to_json %>);
+  // ...
+</script>
+
+
+<p>```</p>
+
+<p>However, in addition to escaping the JSON in a way that prevents XSS, <code>json_escape</code>
+also <em>removes</em> double quote (<code>"</code>) characters. Yes, that's right, <code>json_escape</code>
+is <a href="http://api.rubyonrails.org/classes/ERB/Util.html#method-c-json_escape">documented</a>
+to return invalid JSON. This baffling behavior is most likely a mistake in the
+<a href="https://github.com/rails/rails/commit/0ff7a2d89fc95dcb0a32ed92aab7156b0778a7ea">original implementation</a>.
+I've submitted a pull request to change it, which will hopefully be accepted for Rails 4.</p>
+
+<p>A second attempt might be to try <a href="http://api.rubyonrails.org/classes/ActionView/Helpers/JavaScriptHelper.html#method-i-escape_javascript"><code>escape_javascript</code></a>,
+but this escapes much more than necessary. It could probably be made to work, but would
+require parsing JSON on the client rather than simply interpolating a literal JavaScript
+value.</p>
+
+<p>Finally, there's the option of setting <code>ActiveSupport::JSON::Encoding.escape_html_entities_in_json</code>
+to true. This works, but since the default was <a href="https://github.com/rails/rails/commit/6042067c0b20602e72954450e9e8a19dfa8a9f7d">explicitly changed to false</a>
+in Rails 3, it feels like a workaround at best. If you change the default globally, be sure
+that any consumers of JSON APIs provided by your application are prepared to handle
+Unicode escape sequences, because it will result in <code>&lt;/script&gt;</code> being escaped as
+<code>\u003C/script\u003E</code> rather than <code>&lt;\/script&gt;</code>.</p>
+
+<p>My recommendation is to overwrite <code>json_escape</code> with a sensible definition and use
+that:</p>
+
+<p>``` ruby config/initializers/json_escape.rb
+module ERB::Util
+  def json_escape(s)</p>
+
+<pre><code>result = s.to_s.gsub('/', '\/')
+s.html_safe? ? result.html_safe : result
+</code></pre>
+
+<p>  end</p>
+
+<p>  alias j json_escape
+end
+```</p>
+
+<p>``` erb view.html.erb</p>
+
+<script>
+  var Accounts = new Backbone.Collection;
+  Accounts.reset(<%=j @accounts.to_json.html_safe %>);
+  var Projects = new Backbone.Collection;
+  Projects.reset(<%=j @projects.to_json(:collaborators => true).html_safe %>);
+</script>
+
+
+<p>```</p>
+
+<p>This is simple, sufficient to prevent XSS from bootstrapped JSON, and will hopefully
+be the built-in behavior of <code>json_escape</code>/<code>j</code> in Rails 4.</p>
+]]></content>
+  </entry>
+  
+</feed>
