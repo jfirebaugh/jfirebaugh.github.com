@@ -115,7 +115,7 @@ function of the same name but with leading lower-case, e.g. `User` and `user`:
   }
 
   var userViaNew = new User("John", "Firebaugh");
-  var userViaFactory = user("John Firebaugh");
+  var userViaFactory = user("John", "Resig");
 ```
 
 This works, but again, it increases the size of the API you need to document
