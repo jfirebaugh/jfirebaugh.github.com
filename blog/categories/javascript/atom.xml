@@ -4,7 +4,7 @@
   <title><![CDATA[Category: JavaScript | John Firebaugh]]></title>
   <link href="http://jfirebaugh.github.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://jfirebaugh.github.com/"/>
-  <updated>2012-04-30T14:07:16-07:00</updated>
+  <updated>2013-03-20T12:49:13-07:00</updated>
   <id>http://jfirebaugh.github.com/</id>
   <author>
     <name><![CDATA[John Firebaugh]]></name>
@@ -12,6 +12,150 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[new-less JavaScript]]></title>
+    <link href="http://jfirebaugh.github.com/blog/2013/03/20/newless-javascript/"/>
+    <updated>2013-03-20T10:15:00-07:00</updated>
+    <id>http://jfirebaugh.github.com/blog/2013/03/20/newless-javascript</id>
+    <content type="html"><![CDATA[<p>JavaScript borrowed the <code>new</code> and <code>delete</code> keywords from its less-dynamic
+predecessor languages. They feel a bit out of place in a garbage collected
+language and are a source of confusion for newbies -- one of the reasons
+popular libraries such as jQuery, d3, and Ember.js have adopted APIs that
+don't require using <code>new</code> at all. In this post I'll show you one way do it,
+and why you should consider it for your next JavaScript library.</p>
+
+<p>In C++, <code>new</code> and <code>delete</code> are symmetric operators that combine memory
+management and object lifecycle operations. <code>new</code> allocates an instance and
+calls the constructor, and <code>delete</code> calls the destructor and deallocates it.
+In garbage collected languages, <code>delete</code> isn't necessary; Java doesn't have
+it, for example. It's one of JavaScript's quirks that it <em>does</em> use <code>delete</code>,
+and for a purpose (removing a property from an object) that's not symmetric
+with <code>new</code>. You'll sometimes see confused JavaScript programmers trying to
+<code>delete</code> plain objects.</p>
+
+<p><code>new</code> can itself be a source of confusion. Looking at instantiation with
+<code>new</code>, it's easy to see why: <code>new User()</code> requires both a language keyword
+<em>and</em> a unique syntactic form. In other scripting languages, neither are
+needed: instantiation is done via regular function notation, either via a
+class method as in Ruby (<code>User.new</code>), or calling the class object as a
+function as in Python (<code>User()</code>).</p>
+
+<p>What's worse, in JavaScript, forgetting <code>new</code> when calling a constructor can
+produce some very strange behavior -- leaving variables undefined and polluting
+the global scope. John Resig gave a great <a href="http://ejohn.org/blog/simple-class-instantiation/">rundown of the issues and proposed a solution</a>, often dubbed the
+'instanceof trick':</p>
+
+<p>```js The instanceof trick
+function User(first, last) {
+  if (!(this instanceof User)) return new User(first, last);
+  this.first = first;
+  this.last = last;
+}</p>
+
+<p>User.prototype.fullName = function() {
+  return this.first + ' ' + this.last;
+}
+```</p>
+
+<p>Class constructors defined with the instanceof trick can be called with or
+without <code>new</code>:</p>
+
+<p>```js
+  var userViaNew = new User("John", "Firebaugh");
+  userViaNew.fullName(); // "John Firebaugh"</p>
+
+<p>  var userDirect = User("John", "Resig");
+  userDirect.fullName(); // "John Resig"
+```</p>
+
+<p>In either case, the result is a newly allocated and initialized User.</p>
+
+<p>John Resig goes on to show how to create a reusable function that builds
+constructors that use the instanceof trick. This way, instead of writing it
+out manually for every class, you write it once and use a <a href="https://github.com/jfirebaugh/Leaflet/blob/auto_new/src/core/Class.js">higher-level function</a>
+to declare classes and their prototype properties:</p>
+
+<p><code>``js
+// The</code>Class.extend<code>function defines a new constructor that uses
+// the instanceof trick internally, and then calls</code>initialize`:
+var User = Class.extend({
+  initialize: function(first, last) {</p>
+
+<pre><code>this.first = first;
+this.last = last;
+</code></pre>
+
+<p>  },</p>
+
+<p>  fullName: function() {</p>
+
+<pre><code>return this.first + ' ' + this.last;
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var userViaNew = new User("John", "Firebaugh");
+var userDirect = User("John", "Resig");
+```</p>
+
+<p>APIs that use the instanceof trick internally often publicly document only the
+newless form of instantiation. This minimizes the API surface area, gives new
+users less to learn, and avoids the awkward aspects of <code>new</code>. Another
+advantage is that it allows the implementation to choose either the <a href="http://macwright.org/2012/06/04/the-module-pattern.html">Module pattern</a> or classic
+prototypal instantiation without changing the public API. For example, we can
+rewrite the <code>User</code> class to use the Module pattern without changing how it's
+used:</p>
+
+<p>```js
+function User(first, last) {
+  function fullName() {</p>
+
+<pre><code>return first + ' ' + last;
+</code></pre>
+
+<p>  }
+  return {</p>
+
+<pre><code>first: first,
+last: last,
+fullName: fullName
+</code></pre>
+
+<p>  };
+}
+```</p>
+
+<p>Similarly, if we had started out with the Module pattern, but discovered that
+we needed the <a href="http://macwright.org/2013/01/22/javascript-module-pattern-memory-and-closures.html">memory efficiency of prototypal instantation</a>,
+we could switch without changing client code.</p>
+
+<p>An alternative that some library use is to pair each constructor with a factory
+function of the same name but with leading lower-case, e.g. <code>User</code> and <code>user</code>:</p>
+
+<p>```
+  function user(first, last) {</p>
+
+<pre><code>return new User(first, last);
+</code></pre>
+
+<p>  }</p>
+
+<p>  var userViaNew = new User("John", "Firebaugh");
+  var userViaFactory = user("John Firebaugh");
+```</p>
+
+<p>This works, but again, it increases the size of the API you need to document
+and users need to learn, and unlike the instanceof trick, there's no way to
+implement it in a reusable form. You're stuck writing a factory wrapper for
+every class.</p>
+
+<p>A newless API works great for as jQuery and d3, and I've found it very useful
+in <a href="http://ideditor.com/">iD</a> as well. Consider using it for your next
+library.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Why Ember.js doesn't use property descriptors]]></title>

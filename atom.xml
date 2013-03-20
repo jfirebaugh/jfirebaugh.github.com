@@ -4,7 +4,7 @@
   <title><![CDATA[John Firebaugh]]></title>
   <link href="http://jfirebaugh.github.com/atom.xml" rel="self"/>
   <link href="http://jfirebaugh.github.com/"/>
-  <updated>2012-04-30T14:07:16-07:00</updated>
+  <updated>2013-03-20T12:49:13-07:00</updated>
   <id>http://jfirebaugh.github.com/</id>
   <author>
     <name><![CDATA[John Firebaugh]]></name>
@@ -12,6 +12,180 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[new-less JavaScript]]></title>
+    <link href="http://jfirebaugh.github.com/blog/2013/03/20/newless-javascript/"/>
+    <updated>2013-03-20T10:15:00-07:00</updated>
+    <id>http://jfirebaugh.github.com/blog/2013/03/20/newless-javascript</id>
+    <content type="html"><![CDATA[<p>JavaScript borrowed the <code>new</code> and <code>delete</code> keywords from its less-dynamic
+predecessor languages. They feel a bit out of place in a garbage collected
+language and are a source of confusion for newbies &#8211; one of the reasons
+popular libraries such as jQuery, d3, and Ember.js have adopted APIs that
+don&#8217;t require using <code>new</code> at all. In this post I&#8217;ll show you one way do it,
+and why you should consider it for your next JavaScript library.</p>
+
+<p>In C++, <code>new</code> and <code>delete</code> are symmetric operators that combine memory
+management and object lifecycle operations. <code>new</code> allocates an instance and
+calls the constructor, and <code>delete</code> calls the destructor and deallocates it.
+In garbage collected languages, <code>delete</code> isn&#8217;t necessary; Java doesn&#8217;t have
+it, for example. It&#8217;s one of JavaScript&#8217;s quirks that it <em>does</em> use <code>delete</code>,
+and for a purpose (removing a property from an object) that&#8217;s not symmetric
+with <code>new</code>. You&#8217;ll sometimes see confused JavaScript programmers trying to
+<code>delete</code> plain objects.</p>
+
+<p><code>new</code> can itself be a source of confusion. Looking at instantiation with
+<code>new</code>, it&#8217;s easy to see why: <code>new User()</code> requires both a language keyword
+<em>and</em> a unique syntactic form. In other scripting languages, neither are
+needed: instantiation is done via regular function notation, either via a
+class method as in Ruby (<code>User.new</code>), or calling the class object as a
+function as in Python (<code>User()</code>).</p>
+
+<p>What&#8217;s worse, in JavaScript, forgetting <code>new</code> when calling a constructor can
+produce some very strange behavior &#8211; leaving variables undefined and polluting
+the global scope. John Resig gave a great <a href="http://ejohn.org/blog/simple-class-instantiation/">rundown of the issues and proposed a solution</a>, often dubbed the
+&#8216;instanceof trick&#8217;:</p>
+
+<figure class='code'><figcaption><span>The instanceof trick</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">User</span><span class="p">(</span><span class="nx">first</span><span class="p">,</span> <span class="nx">last</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">User</span><span class="p">))</span> <span class="k">return</span> <span class="k">new</span> <span class="nx">User</span><span class="p">(</span><span class="nx">first</span><span class="p">,</span> <span class="nx">last</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">first</span> <span class="o">=</span> <span class="nx">first</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">last</span> <span class="o">=</span> <span class="nx">last</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">User</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fullName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">first</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">last</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Class constructors defined with the instanceof trick can be called with or
+without <code>new</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'>  <span class="kd">var</span> <span class="nx">userViaNew</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">(</span><span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;Firebaugh&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">userViaNew</span><span class="p">.</span><span class="nx">fullName</span><span class="p">();</span> <span class="c1">// &quot;John Firebaugh&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">userDirect</span> <span class="o">=</span> <span class="nx">User</span><span class="p">(</span><span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;Resig&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">userDirect</span><span class="p">.</span><span class="nx">fullName</span><span class="p">();</span> <span class="c1">// &quot;John Resig&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In either case, the result is a newly allocated and initialized User.</p>
+
+<p>John Resig goes on to show how to create a reusable function that builds
+constructors that use the instanceof trick. This way, instead of writing it
+out manually for every class, you write it once and use a <a href="https://github.com/jfirebaugh/Leaflet/blob/auto_new/src/core/Class.js">higher-level function</a>
+to declare classes and their prototype properties:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// The `Class.extend` function defines a new constructor that uses</span>
+</span><span class='line'><span class="c1">// the instanceof trick internally, and then calls `initialize`:</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">first</span><span class="p">,</span> <span class="nx">last</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">first</span> <span class="o">=</span> <span class="nx">first</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">last</span> <span class="o">=</span> <span class="nx">last</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">fullName</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">first</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">last</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">userViaNew</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">(</span><span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;Firebaugh&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">userDirect</span> <span class="o">=</span> <span class="nx">User</span><span class="p">(</span><span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;Resig&quot;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>APIs that use the instanceof trick internally often publicly document only the
+newless form of instantiation. This minimizes the API surface area, gives new
+users less to learn, and avoids the awkward aspects of <code>new</code>. Another
+advantage is that it allows the implementation to choose either the <a href="http://macwright.org/2012/06/04/the-module-pattern.html">Module pattern</a> or classic
+prototypal instantiation without changing the public API. For example, we can
+rewrite the <code>User</code> class to use the Module pattern without changing how it&#8217;s
+used:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">User</span><span class="p">(</span><span class="nx">first</span><span class="p">,</span> <span class="nx">last</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">function</span> <span class="nx">fullName</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">first</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">last</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">first</span><span class="o">:</span> <span class="nx">first</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">last</span><span class="o">:</span> <span class="nx">last</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">fullName</span><span class="o">:</span> <span class="nx">fullName</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Similarly, if we had started out with the Module pattern, but discovered that
+we needed the <a href="http://macwright.org/2013/01/22/javascript-module-pattern-memory-and-closures.html">memory efficiency of prototypal instantation</a>,
+we could switch without changing client code.</p>
+
+<p>An alternative that some library use is to pair each constructor with a factory
+function of the same name but with leading lower-case, e.g. <code>User</code> and <code>user</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'>  <span class="kd">function</span> <span class="nx">user</span><span class="p">(</span><span class="nx">first</span><span class="p">,</span> <span class="nx">last</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nx">User</span><span class="p">(</span><span class="nx">first</span><span class="p">,</span> <span class="nx">last</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">userViaNew</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">(</span><span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;Firebaugh&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">userViaFactory</span> <span class="o">=</span> <span class="nx">user</span><span class="p">(</span><span class="s2">&quot;John Firebaugh&quot;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This works, but again, it increases the size of the API you need to document
+and users need to learn, and unlike the instanceof trick, there&#8217;s no way to
+implement it in a reusable form. You&#8217;re stuck writing a factory wrapper for
+every class.</p>
+
+<p>A newless API works great for as jQuery and d3, and I&#8217;ve found it very useful
+in <a href="http://ideditor.com/">iD</a> as well. Consider using it for your next
+library.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[How to securely bootstrap JSON in a Rails view]]></title>
