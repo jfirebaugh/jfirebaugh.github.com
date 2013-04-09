@@ -4,7 +4,7 @@
   <title><![CDATA[John Firebaugh]]></title>
   <link href="http://jfirebaugh.github.com/atom.xml" rel="self"/>
   <link href="http://jfirebaugh.github.com/"/>
-  <updated>2013-03-20T12:49:13-07:00</updated>
+  <updated>2013-04-08T23:40:41-04:00</updated>
   <id>http://jfirebaugh.github.com/</id>
   <author>
     <name><![CDATA[John Firebaugh]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[new-less JavaScript]]></title>
     <link href="http://jfirebaugh.github.com/blog/2013/03/20/newless-javascript/"/>
-    <updated>2013-03-20T10:15:00-07:00</updated>
+    <updated>2013-03-20T10:15:00-04:00</updated>
     <id>http://jfirebaugh.github.com/blog/2013/03/20/newless-javascript</id>
     <content type="html"><![CDATA[<p>JavaScript borrowed the <code>new</code> and <code>delete</code> keywords from its less-dynamic
 predecessor languages. They feel a bit out of place in a garbage collected
@@ -172,7 +172,7 @@ function of the same name but with leading lower-case, e.g. <code>User</code> an
 </span><span class='line'>  <span class="p">}</span>
 </span><span class='line'>
 </span><span class='line'>  <span class="kd">var</span> <span class="nx">userViaNew</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">(</span><span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;Firebaugh&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="kd">var</span> <span class="nx">userViaFactory</span> <span class="o">=</span> <span class="nx">user</span><span class="p">(</span><span class="s2">&quot;John Firebaugh&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">userViaFactory</span> <span class="o">=</span> <span class="nx">user</span><span class="p">(</span><span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;Resig&quot;</span><span class="p">);</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -190,7 +190,7 @@ library.</p>
   <entry>
     <title type="html"><![CDATA[How to securely bootstrap JSON in a Rails view]]></title>
     <link href="http://jfirebaugh.github.com/blog/2012/04/30/how-to-securely-bootstrap-json-in-a-rails-view/"/>
-    <updated>2012-04-30T10:13:00-07:00</updated>
+    <updated>2012-04-30T10:13:00-04:00</updated>
     <id>http://jfirebaugh.github.com/blog/2012/04/30/how-to-securely-bootstrap-json-in-a-rails-view</id>
     <content type="html"><![CDATA[<p>A common pattern with client-side MVC applications is to embed the data for a
 base set of models in the initial page instead of making a separate AJAX request to
@@ -351,7 +351,7 @@ be the built-in behavior of <code>json_escape</code>/<code>j</code> in Rails 4.<
   <entry>
     <title type="html"><![CDATA[Why Ember.js doesn't use property descriptors]]></title>
     <link href="http://jfirebaugh.github.com/blog/2012/04/19/why-ember-dot-js-doesnt-use-property-descriptors/"/>
-    <updated>2012-04-19T08:11:00-07:00</updated>
+    <updated>2012-04-19T08:11:00-04:00</updated>
     <id>http://jfirebaugh.github.com/blog/2012/04/19/why-ember-dot-js-doesnt-use-property-descriptors</id>
     <content type="html"><![CDATA[<p>Like model classes in many other JavaScript MVC frameworks, <code>Ember.Object</code> uses
 <code>get()</code>/<code>set()</code>-based property accessor functions rather than native JavaScript
@@ -437,7 +437,7 @@ for me. Any inaccuracies in the above are my own.</p>
   <entry>
     <title type="html"><![CDATA[Code Archaeology with Git]]></title>
     <link href="http://jfirebaugh.github.com/blog/2012/03/07/code-archaeology-with-git/"/>
-    <updated>2012-03-07T15:35:00-08:00</updated>
+    <updated>2012-03-07T15:35:00-05:00</updated>
     <id>http://jfirebaugh.github.com/blog/2012/03/07/code-archaeology-with-git</id>
     <content type="html"><![CDATA[<p>Have you ever dug through the commit history of an open source project, peeling
 away layers, sifting for clues, trying to answer the question, &#8220;why does this
@@ -670,7 +670,7 @@ recent activity, so I&#8217;m cautiously optimistic this feature may yet be rele
   <entry>
     <title type="html"><![CDATA[Xcode 4.3, homebrew, and Ruby]]></title>
     <link href="http://jfirebaugh.github.com/blog/2012/03/02/xcode-4-dot-3-homebrew-and-ruby/"/>
-    <updated>2012-03-02T00:00:00-08:00</updated>
+    <updated>2012-03-02T00:00:00-05:00</updated>
     <id>http://jfirebaugh.github.com/blog/2012/03/02/xcode-4-dot-3-homebrew-and-ruby</id>
     <content type="html"><![CDATA[<p>Ruby on Mac OS Lion is going through a bit of a rough patch,
 installation-wise. With Xcode 4.2, clang became the default compiler and gcc
@@ -816,7 +816,7 @@ version of 1.9.3 instead: <code>rvm install 1.9.3-head</code>.</p>
   <entry>
     <title type="html"><![CDATA[Visualizing SFpark Demand-Responsive Meter Rate Adjustments]]></title>
     <link href="http://jfirebaugh.github.com/blog/2011/09/03/visualizing-sfpark-demand-responsive-meter-rate-adjustments/"/>
-    <updated>2011-09-03T00:00:00-07:00</updated>
+    <updated>2011-09-03T00:00:00-04:00</updated>
     <id>http://jfirebaugh.github.com/blog/2011/09/03/visualizing-sfpark-demand-responsive-meter-rate-adjustments</id>
     <content type="html"><![CDATA[<p>On July 11th 2011, <a href="http://sfpark.org/">SF<em>park</em></a> announced the
 first set of <a href="http://sfpark.org/how-it-works/pricing/">meter rate adjustments</a>.
@@ -843,7 +843,7 @@ rate adjustment visualization" /></a></p>
   <entry>
     <title type="html"><![CDATA[Kernel Density Estimation with Protovis]]></title>
     <link href="http://jfirebaugh.github.com/blog/2011/04/03/kernel-density-estimation-with-protovis/"/>
-    <updated>2011-04-03T00:00:00-07:00</updated>
+    <updated>2011-04-03T00:00:00-04:00</updated>
     <id>http://jfirebaugh.github.com/blog/2011/04/03/kernel-density-estimation-with-protovis</id>
     <content type="html"><![CDATA[<p><a href="http://bl.ocks.org/900762"><img src="http://dl.dropbox.com/u/7078234/KDE.png" alt="" /></a></p>
 
@@ -872,7 +872,7 @@ geyser&#8217;s geohydrology.</p>
   <entry>
     <title type="html"><![CDATA[Making sense of constant lookup in Ruby]]></title>
     <link href="http://jfirebaugh.github.com/blog/2011/01/21/making-sense-of-constant-lookup-in-ruby/"/>
-    <updated>2011-01-21T00:00:00-08:00</updated>
+    <updated>2011-01-21T00:00:00-05:00</updated>
     <id>http://jfirebaugh.github.com/blog/2011/01/21/making-sense-of-constant-lookup-in-ruby</id>
     <content type="html"><![CDATA[<p>In Ruby 1.8, constant lookup is mostly <a
 href="http://en.wikipedia.org/wiki/Scope_(programming)#Lexical_versus_dynamic_scoping">lexically scoped</a>,
@@ -1066,7 +1066,7 @@ end
   <entry>
     <title type="html"><![CDATA[Selenium on Ruby]]></title>
     <link href="http://jfirebaugh.github.com/blog/2010/12/22/selenium-on-ruby/"/>
-    <updated>2010-12-22T00:00:00-08:00</updated>
+    <updated>2010-12-22T00:00:00-05:00</updated>
     <id>http://jfirebaugh.github.com/blog/2010/12/22/selenium-on-ruby</id>
     <content type="html"><![CDATA[<p>The state of Selenium on Ruby is a bit confusing. Among the top google results for
 <a href="http://www.google.com/search?q=selenium+ruby">&#8220;selenium ruby&#8221;</a> are several links that are badly out of date, and it&#8217;s

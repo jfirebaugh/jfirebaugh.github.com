@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>Cherry Blossom Festival and Peak Bloom Dates</title>
+    <script src='d3.js'></script>
+    <style>
+      body {
+        max-width: 1000px;
+        margin: auto;
+        background: #444;
+        color: white;
+        fill: white;
+        font-family: "Helvetica Neue", Helvetica, sans-serif;
+        line-height: 1.5;
+        background-image: url('background.png');
+      }
+
+      h2 {
+        text-align: center;
+      }
+      
+      a {
+        color: inherit;
+      }
+
+      .description {
+        max-width: 600px;
+        margin: 2em auto;
+        text-align: justify;
+      }
+
+      .attribution {
+        font-size: 10px;
+        text-transform: uppercase;
+        text-align: center;
+      }
+      
+      svg {
+        margin: 2em;
+      }
+
+      path.domain {
+        display: none;
+      }
+
+      .major line {
+        stroke: white;
+      }
+      
+      .major text {
+        font-size: 12px;
+      }
+
+      .festival {
+        fill: #666;
+      }
+
+      .temperature {
+        fill-opacity: 0.5;
+      }
+      
+      text.label {
+        font-size: 14px;
+      }
+
+      .lo {
+        fill: #A9B7E6;
+      }
+
+      .hi {
+        fill: #E8BAE1;
+      }
+
+      .florette {
+        cursor: default;
+        font-size: 24px;
+      }
+
+      .yoshino {
+        color: #eee;
+        fill: #eee;
+      }
+
+      .kwanzan {
+        color: pink;
+        fill: pink;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Cherry Blossom Festival and Peak Bloom Dates</h2>
+    <p class='description'>
+      As of April 8, 2013, the <a href="http://en.wikipedia.org/wiki/National_Cherry_Blossom_Festival">cherry blossoms</a> are beginning to reach peak
+      bloom around the Tidal Basin in Washington, DC.
+    </p>
+    <p class='description'>
+      The Peak Bloom Date is defined as the day in which 70 percent of the
+      blossoms of the Yoshino Cherry (<a href="http://en.wikipedia.org/wiki/Prunus_%C3%97_yedoensis">Prunus × yedoensis</a>) trees are open. The
+      date when the Yoshino cherry blossoms reach peak bloom varies from year
+      to year, depending on weather conditions. Cherry Blossom Festival dates
+      are set based on the average date of blooming (April 4), but peak bloom 
+      has been as early as March 15 (1990) and as late as April 18 (1958).
+    </p>
+    <p class='attribution'>
+      Bloom data from the <a href="http://www.nps.gov/cherry/cherry-blossom-bloom.htm">National Park Service</a>.<br>
+      Temperature data from the <a href="http://www.ncdc.noaa.gov">National Climactic Data Center</a>.<br>
+      Visualization by <a href="http://twitter.com/jfire">John Firebaugh</a>. Built with <a href="http://d3js.org">D3.js</a>.
+    </p>
+    <script>
+      d3.csv('weather-new.csv', function(weather) {
+      d3.csv('cherry-bloom.csv', function(data) {
+        weather.forEach(function(d) {
+          d.date = d3.time.format('%Y-%m-%d').parse(d.date);
+          d.tmin = +d.tmin;
+          d.tmax = +d.tmax;
+        });
+
+        var md = d3.time.format('%m-%d'),
+            bd = d3.time.format("%B %d"),
+            means = {};
+
+        d3.nest()
+            .key(function(d) { return md(d.date); })
+            .entries(weather)
+            .forEach(function(d) {
+              means[d.key] = {
+                lo: d3.mean(d.values, function(d) { return d.tmin; }),
+                hi: d3.mean(d.values, function(d) { return d.tmax; })
+              }
+            });
+
+        weather = d3.nest()
+            .key(function(d) { return d.date.getFullYear(); })
+            .map(weather);
+            
+        data.reverse();
+
+        var margin = {top: 20, right: 0, bottom: 0, left: 0},
+            span = 40,
+            width = 960 - margin.left - margin.right,
+            height = span * data.length + margin.top + margin.bottom,
+            parse = d3.time.format('%d-%b').parse;
+
+        function noon(date) {
+          return new Date(date.getTime() + 12 * 60 * 60 * 1000);
+        }
+        
+        function eod(date) {
+          return new Date(date.getTime() + 24 * 60 * 60 * 1000);
+        }
+
+        data.forEach(function(d) {
+          d.year = +d.year;
+
+          if (d.fest0 && d.fest1) {
+            d.festival = [{
+              begin: parse(d.fest0),
+              end: eod(parse(d.fest1))
+            }];
+          } else if (d.year == 1950) {
+            // Special case
+            d.festival = [{
+              begin: new Date(1900, 3, 1),
+              end: new Date(1900, 3, 3)
+            }, {
+              begin: new Date(1900, 3, 8),
+              end: new Date(1900, 3, 10)
+            }]
+          } else {
+            d.festival = [];
+          }
+
+          if (d.yoshino) d.yoshino = noon(parse(d.yoshino));
+          if (d.kwanzan) d.kwanzan = noon(parse(d.kwanzan));
+
+          d.weather = weather[d.year] || [];
+        });
+        
+        var extent = d3.extent(data, function(d) { return d.yoshino; });
+
+        var x = d3.time.scale()
+          .domain([new Date(1900, 2, 5), new Date(1900, 4, 8)])
+          .range([0, width]);
+
+        var y = d3.scale.linear()
+          .domain([-15, 15])
+          .range([span, 0]);
+
+        var svg = d3.select('body').append('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+          .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+        svg.append('g')
+            .call(d3.svg.axis()
+                .scale(x)
+                .orient('top'));
+
+        var year = svg.selectAll('g.year')
+            .data(data, function(d) { return d.year; })
+          .enter().append('g')
+            .attr('class', 'year')
+            .attr('transform', function(d, i) { return 'translate(0,' + i*span +')'});
+
+        // Festival Dates
+        year.selectAll('rect.festival')
+            .data(function(d) { return d.festival; })
+          .enter().append('rect')
+            .attr('class', 'festival')
+            .attr('rx', 4)
+            .attr('y', 4)
+            .attr('height', span - 4)
+            .attr('x', function(d) { return x(d.begin)})
+            .attr('width', function(d) { return x(d.end) - x(d.begin); });
+
+        // Temperatures
+        year.append('path')
+            .datum(function(d) { return d.weather; })
+            .attr('class', 'temperature lo')
+            .attr('d', d3.svg.area()
+                .x(function(d) { return x(new Date(1900, d.date.getMonth(), d.date.getDate())); })
+                .y0(function(d) { return y(Math.min(d.tmin - means[md(d.date)].lo, 0)); })
+                .y1(y(0)));
+
+        year.append('path')
+            .datum(function(d) { return d.weather; })
+            .attr('class', 'temperature hi')
+            .attr('d', d3.svg.area()
+                .x(function(d) { return x(new Date(1900, d.date.getMonth(), d.date.getDate())); })
+                .y0(y(0))
+                .y1(function(d) { return y(Math.max(d.tmax - means[md(d.date)].hi, 0)); }));
+
+        // Yoshino Bloom
+        year.append('text')
+            .attr('class', 'yoshino florette')
+            .attr('x', function(d) { return x(d.yoshino); })
+            .attr('y', span / 2)
+            .attr('dy', '.45em')
+            .attr('text-anchor', 'middle')
+            .attr('title', function(d) { return d.yoshino && bd(d.yoshino); })
+            .text('✿');
+
+        // Kwanzan Bloom
+        year.append('text')
+            .attr('class', 'kwanzan florette')
+            .attr('x', function(d) { return x(d.kwanzan); })
+            .attr('y', span / 2)
+            .attr('dy', '.45em')
+            .attr('text-anchor', 'middle')
+            .attr('title', function(d) { return d.kwanzan && bd(d.kwanzan); })
+            .text('✿');
+
+        // Labels
+        year.append('text')
+            .attr('x', 0)
+            .attr('y', span / 2)
+            .attr('dx', 3)
+            .attr('dy', '.45em')
+            .attr('text-anchor', 'start')
+            .text(function(d) { return d.year; });
+
+        svg.append('text')
+            .attr('class', 'label yoshino')
+            .attr('x', x(data[0].yoshino))
+            .attr('y', span / 2)
+            .attr('dx', -15)
+            .attr('dy', '.45em')
+            .attr('text-anchor', 'end')
+            .text("Yoshino Peak Bloom");
+
+        svg.append('text')
+            .attr('class', 'label kwanzan')
+            .attr('x', x(data[0].kwanzan))
+            .attr('y', span / 2)
+            .attr('dx', 15)
+            .attr('dy', '.45em')
+            .attr('text-anchor', 'start')
+            .text("Kwanzan Peak Bloom");
+
+        svg.append('text')
+            .attr('class', 'label')
+            .style('fill', '#ccc')
+            .attr('x', x(data[0].festival[0].end))
+            .attr('y', span + 1)
+            .attr('dx', '-0.3em')
+            .attr('dy', '-0.3em')
+            .attr('text-anchor', 'end')
+            .text("2012 Centennial Celebration");
+
+        svg.append('text')
+            .attr('class', 'label')
+            .attr('x', (x(data[1].festival[0].begin) + x(data[1].festival[0].end)) / 2)
+            .attr('y', span * 2 + 1)
+            .attr('dy', '.35em')
+            .attr('text-anchor', 'middle')
+            .text("⟵ Festival Dates ⟶");
+
+        year.filter(function(d) { return d.year === 2010; })
+            .append('text')
+            .attr('class', 'label hi')
+            .attr('x', x(new Date(1900, 2, 10)))
+            .attr('y', span)
+            .attr('dy', '-.3em')
+            .attr('text-anchor', 'start')
+            .text('temperatures above mean high ⤴');
+
+       year.filter(function(d) { return d.year === 2009; })
+           .append('text')
+           .attr('class', 'label lo')
+           .attr('x', x(new Date(1900, 2, 13)))
+           .attr('y', span)
+           .attr('dy', '.2em')
+           .attr('text-anchor', 'start')
+           .text('below mean low ⤴');
+
+        year.filter(function(d) { return d.year === 1990; })
+            .append('text')
+            .attr('class', 'label yoshino')
+            .attr('x', function(d) { return x(d.yoshino); })
+            .attr('y', span / 2)
+            .attr('dx', 15)
+            .attr('dy', '.45em')
+            .attr('text-anchor', 'begin')
+            .text(function(d) { return "Earliest bloom: " + bd(d.yoshino); });
+
+        year.filter(function(d) { return d.year === 1958; })
+            .append('text')
+            .attr('class', 'label yoshino')
+            .attr('x', function(d) { return x(d.yoshino); })
+            .attr('y', span / 2)
+            .attr('dx', -15)
+            .attr('dy', '.45em')
+            .attr('text-anchor', 'end')
+            .text(function(d) { return "Latest bloom: " + bd(d.yoshino); });
+      });
+      });
+    </script>
+  </body>
+</html>

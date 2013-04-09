@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Visualization | John Firebaugh]]></title>
   <link href="http://jfirebaugh.github.com/blog/categories/visualization/atom.xml" rel="self"/>
   <link href="http://jfirebaugh.github.com/"/>
-  <updated>2013-03-20T12:49:13-07:00</updated>
+  <updated>2013-04-08T23:40:41-04:00</updated>
   <id>http://jfirebaugh.github.com/</id>
   <author>
     <name><![CDATA[John Firebaugh]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Code Archaeology with Git]]></title>
     <link href="http://jfirebaugh.github.com/blog/2012/03/07/code-archaeology-with-git/"/>
-    <updated>2012-03-07T15:35:00-08:00</updated>
+    <updated>2012-03-07T15:35:00-05:00</updated>
     <id>http://jfirebaugh.github.com/blog/2012/03/07/code-archaeology-with-git</id>
     <content type="html"><![CDATA[<p>Have you ever dug through the commit history of an open source project, peeling
 away layers, sifting for clues, trying to answer the question, "why does this
@@ -85,7 +85,7 @@ $ git blame -L23,25 actionpack/lib/sprockets/railtie.rb
 8248052e (Joshua Peek 2011-07-27 15:09:42 -0500 25)
 $ git log -1 63d3809e
 commit 63d3809e31cc9c0ed3b2e30617310407ae614fd4
-Author: Joshua Peek <a href="&#109;&#x61;&#105;&#x6c;&#116;&#111;&#58;&#106;&#x6f;&#115;&#x68;&#64;&#x6a;&#x6f;&#115;&#104;&#x70;&#101;&#x65;&#107;&#46;&#x63;&#x6f;&#x6d;">&#x6a;&#x6f;&#115;&#x68;&#x40;&#106;&#x6f;&#x73;&#x68;&#112;&#101;&#x65;&#107;&#x2e;&#99;&#x6f;&#x6d;</a>
+Author: Joshua Peek <a href="&#x6d;&#x61;&#x69;&#x6c;&#116;&#x6f;&#x3a;&#x6a;&#x6f;&#x73;&#x68;&#64;&#x6a;&#x6f;&#115;&#104;&#112;&#x65;&#x65;&#x6b;&#x2e;&#99;&#x6f;&#x6d;">&#x6a;&#x6f;&#x73;&#104;&#x40;&#x6a;&#111;&#115;&#x68;&#x70;&#x65;&#x65;&#x6b;&#46;&#99;&#111;&#109;</a>
 Date:   Sun Aug 21 16:42:06 2011 -0500</p>
 
 <pre><code>Fix sprockets warnings
@@ -100,7 +100,7 @@ Fixes #2598
 <p>```
 $ git log -S'Rails.env' actionpack/lib/sprockets/railtie.rb
 commit ed5c6d254c9ef5d44a11159561fddde7a3033874
-Author: Ilya Grigorik <a href="&#x6d;&#97;&#105;&#108;&#116;&#111;&#58;&#105;&#108;&#121;&#x61;&#x40;&#105;&#103;&#118;&#x69;&#116;&#97;&#x2e;&#99;&#x6f;&#109;">&#105;&#x6c;&#x79;&#x61;&#x40;&#105;&#x67;&#x76;&#x69;&#x74;&#x61;&#46;&#x63;&#x6f;&#109;</a>
+Author: Ilya Grigorik <a href="&#x6d;&#97;&#x69;&#108;&#116;&#x6f;&#58;&#x69;&#108;&#x79;&#97;&#64;&#105;&#103;&#x76;&#x69;&#x74;&#97;&#46;&#99;&#111;&#109;">&#x69;&#108;&#121;&#97;&#x40;&#105;&#103;&#x76;&#105;&#x74;&#x61;&#x2e;&#x63;&#x6f;&#109;</a>
 Date:   Thu Aug 4 23:48:40 2011 -0400</p>
 
 <pre><code>generate environment dependent asset digests
@@ -232,7 +232,7 @@ recent activity, so I'm cautiously optimistic this feature may yet be released.<
   <entry>
     <title type="html"><![CDATA[Visualizing SFpark Demand-Responsive Meter Rate Adjustments]]></title>
     <link href="http://jfirebaugh.github.com/blog/2011/09/03/visualizing-sfpark-demand-responsive-meter-rate-adjustments/"/>
-    <updated>2011-09-03T00:00:00-07:00</updated>
+    <updated>2011-09-03T00:00:00-04:00</updated>
     <id>http://jfirebaugh.github.com/blog/2011/09/03/visualizing-sfpark-demand-responsive-meter-rate-adjustments</id>
     <content type="html"><![CDATA[<p>On July 11th 2011, <a href="http://sfpark.org/">SF<em>park</em></a> announced the
 first set of <a href="http://sfpark.org/how-it-works/pricing/">meter rate adjustments</a>.
@@ -259,7 +259,7 @@ rate adjustment visualization" /></a></p>
   <entry>
     <title type="html"><![CDATA[Kernel Density Estimation with Protovis]]></title>
     <link href="http://jfirebaugh.github.com/blog/2011/04/03/kernel-density-estimation-with-protovis/"/>
-    <updated>2011-04-03T00:00:00-07:00</updated>
+    <updated>2011-04-03T00:00:00-04:00</updated>
     <id>http://jfirebaugh.github.com/blog/2011/04/03/kernel-density-estimation-with-protovis</id>
     <content type="html"><![CDATA[<p><a href="http://bl.ocks.org/900762"><img src="http://dl.dropbox.com/u/7078234/KDE.png" alt="" /></a></p>
 

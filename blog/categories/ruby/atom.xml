@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Ruby | John Firebaugh]]></title>
   <link href="http://jfirebaugh.github.com/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://jfirebaugh.github.com/"/>
-  <updated>2013-03-20T12:49:13-07:00</updated>
+  <updated>2013-04-08T23:40:41-04:00</updated>
   <id>http://jfirebaugh.github.com/</id>
   <author>
     <name><![CDATA[John Firebaugh]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Xcode 4.3, homebrew, and Ruby]]></title>
     <link href="http://jfirebaugh.github.com/blog/2012/03/02/xcode-4-dot-3-homebrew-and-ruby/"/>
-    <updated>2012-03-02T00:00:00-08:00</updated>
+    <updated>2012-03-02T00:00:00-05:00</updated>
     <id>http://jfirebaugh.github.com/blog/2012/03/02/xcode-4-dot-3-homebrew-and-ruby</id>
     <content type="html"><![CDATA[<p>Ruby on Mac OS Lion is going through a bit of a rough patch,
 installation-wise. With Xcode 4.2, clang became the default compiler and gcc
@@ -144,7 +144,7 @@ version of 1.9.3 instead: <code>rvm install 1.9.3-head</code>.</p>
   <entry>
     <title type="html"><![CDATA[Making sense of constant lookup in Ruby]]></title>
     <link href="http://jfirebaugh.github.com/blog/2011/01/21/making-sense-of-constant-lookup-in-ruby/"/>
-    <updated>2011-01-21T00:00:00-08:00</updated>
+    <updated>2011-01-21T00:00:00-05:00</updated>
     <id>http://jfirebaugh.github.com/blog/2011/01/21/making-sense-of-constant-lookup-in-ruby</id>
     <content type="html"><![CDATA[<p>In Ruby 1.8, constant lookup is mostly <a
 href="http://en.wikipedia.org/wiki/Scope_(programming)#Lexical_versus_dynamic_scoping">lexically scoped</a>,
@@ -336,7 +336,7 @@ end
   <entry>
     <title type="html"><![CDATA[Selenium on Ruby]]></title>
     <link href="http://jfirebaugh.github.com/blog/2010/12/22/selenium-on-ruby/"/>
-    <updated>2010-12-22T00:00:00-08:00</updated>
+    <updated>2010-12-22T00:00:00-05:00</updated>
     <id>http://jfirebaugh.github.com/blog/2010/12/22/selenium-on-ruby</id>
     <content type="html"><![CDATA[<p>The state of Selenium on Ruby is a bit confusing. Among the top google results for
 <a href="http://www.google.com/search?q=selenium+ruby">"selenium ruby"</a> are several links that are badly out of date, and it's

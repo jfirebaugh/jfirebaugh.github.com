@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Statistics | John Firebaugh]]></title>
   <link href="http://jfirebaugh.github.com/blog/categories/statistics/atom.xml" rel="self"/>
   <link href="http://jfirebaugh.github.com/"/>
-  <updated>2013-03-20T12:49:13-07:00</updated>
+  <updated>2013-04-08T23:40:41-04:00</updated>
   <id>http://jfirebaugh.github.com/</id>
   <author>
     <name><![CDATA[John Firebaugh]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Visualizing SFpark Demand-Responsive Meter Rate Adjustments]]></title>
     <link href="http://jfirebaugh.github.com/blog/2011/09/03/visualizing-sfpark-demand-responsive-meter-rate-adjustments/"/>
-    <updated>2011-09-03T00:00:00-07:00</updated>
+    <updated>2011-09-03T00:00:00-04:00</updated>
     <id>http://jfirebaugh.github.com/blog/2011/09/03/visualizing-sfpark-demand-responsive-meter-rate-adjustments</id>
     <content type="html"><![CDATA[<p>On July 11th 2011, <a href="http://sfpark.org/">SF<em>park</em></a> announced the
 first set of <a href="http://sfpark.org/how-it-works/pricing/">meter rate adjustments</a>.
@@ -43,7 +43,7 @@ rate adjustment visualization" /></a></p>
   <entry>
     <title type="html"><![CDATA[Kernel Density Estimation with Protovis]]></title>
     <link href="http://jfirebaugh.github.com/blog/2011/04/03/kernel-density-estimation-with-protovis/"/>
-    <updated>2011-04-03T00:00:00-07:00</updated>
+    <updated>2011-04-03T00:00:00-04:00</updated>
     <id>http://jfirebaugh.github.com/blog/2011/04/03/kernel-density-estimation-with-protovis</id>
     <content type="html"><![CDATA[<p><a href="http://bl.ocks.org/900762"><img src="http://dl.dropbox.com/u/7078234/KDE.png" alt="" /></a></p>
 

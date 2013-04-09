@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Homebrew | John Firebaugh]]></title>
   <link href="http://jfirebaugh.github.com/blog/categories/homebrew/atom.xml" rel="self"/>
   <link href="http://jfirebaugh.github.com/"/>
-  <updated>2013-03-20T12:49:13-07:00</updated>
+  <updated>2013-04-08T23:40:41-04:00</updated>
   <id>http://jfirebaugh.github.com/</id>
   <author>
     <name><![CDATA[John Firebaugh]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Xcode 4.3, homebrew, and Ruby]]></title>
     <link href="http://jfirebaugh.github.com/blog/2012/03/02/xcode-4-dot-3-homebrew-and-ruby/"/>
-    <updated>2012-03-02T00:00:00-08:00</updated>
+    <updated>2012-03-02T00:00:00-05:00</updated>
     <id>http://jfirebaugh.github.com/blog/2012/03/02/xcode-4-dot-3-homebrew-and-ruby</id>
     <content type="html"><![CDATA[<p>Ruby on Mac OS Lion is going through a bit of a rough patch,
 installation-wise. With Xcode 4.2, clang became the default compiler and gcc
