@@ -37,7 +37,7 @@
       }
       
       svg {
-        margin-top: 2em;
+        margin: 2em;
       }
 
       path.domain {
@@ -91,7 +91,7 @@
   <body>
     <h2>Cherry Blossom Festival and Peak Bloom Dates</h2>
     <p class='description'>
-      As of April 8, 2013, the cherry blossoms are beginning to reach peak
+      As of April 8, 2013, the <a href="http://en.wikipedia.org/wiki/National_Cherry_Blossom_Festival">cherry blossoms</a> are beginning to reach peak
       bloom around the Tidal Basin in Washington, DC.
     </p>
     <p class='description'>
@@ -297,19 +297,10 @@
             .attr('text-anchor', 'middle')
             .text("⟵ Festival Dates ⟶");
 
-        svg.append('text')
-            .text('}')
-            .attr('x', 50)
-            .attr('y', (2011 - 1942) * span)
-            .attr('dy', '-0.05em')
-            .attr('text-anchor', 'start')
-            .style('font-face', 'Optima')
-            .style('font-size', '190px');
-
         year.filter(function(d) { return d.year === 2010; })
             .append('text')
             .attr('class', 'label hi')
-            .attr('x', x(new Date(1900, 2, 9)))
+            .attr('x', x(new Date(1900, 2, 10)))
             .attr('y', span)
             .attr('dy', '-.3em')
             .attr('text-anchor', 'start')
@@ -318,7 +309,7 @@
        year.filter(function(d) { return d.year === 2009; })
            .append('text')
            .attr('class', 'label lo')
-           .attr('x', x(new Date(1900, 2, 14)))
+           .attr('x', x(new Date(1900, 2, 13)))
            .attr('y', span)
            .attr('dy', '.2em')
            .attr('text-anchor', 'start')
@@ -343,13 +334,6 @@
             .attr('dy', '.45em')
             .attr('text-anchor', 'end')
             .text(function(d) { return "Latest bloom: " + bd(d.yoshino); });
-
-        svg.append('text')
-            .text('Festival suspended during WWII')
-            .attr('x', 110)
-            .attr('y', (2011 - 1944) * span)
-            .attr('dy', '1.5em')
-            .attr('text-anchor', 'start');
       });
       });
     </script>
